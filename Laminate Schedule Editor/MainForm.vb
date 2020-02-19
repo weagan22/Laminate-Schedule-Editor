@@ -4,6 +4,13 @@ Public Class MainForm
     Dim xlWorkBook As Excel.Workbook
     Dim Excel As Object
 
+    Public CalcState As Long
+    Public EventState As Boolean
+    Public PageBreakState As Boolean
+
+
+
+
     Private Sub Btn_Browse_Click(sender As Object, e As EventArgs) Handles Btn_Browse.Click
         If OpenFileDialog.ShowDialog() = System.Windows.Forms.DialogResult.OK Then
             FilePath.Text = OpenFileDialog.FileName
@@ -217,11 +224,65 @@ Public Class MainForm
         xlWorkBook.ActiveSheet.Cells(currentLine, 1).Value = "BLANK"
         currentLine = currentLine + 1
 
+
     End Sub
 
     Sub addValues()
+        Dim startTime As DateTime = Now()
+
+        Call OptimizeCode_Begin()
 
         xlWorkBook.Worksheets.Item(1).Activate
+
+
+
+        'Gets values from PlyBook tab
+        Dim arrPlies(,) As String
+        ReDim arrPlies(3, 0)
+
+        Dim m As Integer = 1
+        Do Until CStr(xlWorkBook.Sheets.Item(2).Cells(m + 1, 1).Value) = ""
+            ReDim Preserve arrPlies(3, m)
+            arrPlies(0, m) = xlWorkBook.Sheets.Item(2).Cells(m + 1, 1).Value
+            arrPlies(1, m) = xlWorkBook.Sheets.Item(2).Cells(m + 1, 3).Value
+            arrPlies(2, m) = xlWorkBook.Sheets.Item(2).Cells(m + 1, 5).Value
+            arrPlies(3, m) = xlWorkBook.Sheets.Item(2).Cells(m + 1, 4).Value
+            m = m + 1
+        Loop
+
+
+        'Gets values from standards tab
+        Dim arrStandard(,) As Object
+        ReDim arrStandard(15, 0)
+
+        m = 1
+        Do Until CStr(xlWorkBook.Sheets.Item(3).Cells(m + 1, 1).Value) = ""
+            ReDim Preserve arrStandard(15, m)
+            arrStandard(0, m) = xlWorkBook.Sheets.Item(3).Cells(m + 1, 1).Value
+
+            arrStandard(1, m) = xlWorkBook.Sheets.Item(3).Cells(m + 1, 2).Value
+            arrStandard(2, m) = xlWorkBook.Sheets.Item(3).Cells(m + 1, 2).HorizontalAlignment
+            arrStandard(3, m) = xlWorkBook.Sheets.Item(3).Cells(m + 1, 2).Interior.Color
+            arrStandard(4, m) = xlWorkBook.Sheets.Item(3).Cells(m + 1, 2).Font.Bold
+            arrStandard(5, m) = xlWorkBook.Sheets.Item(3).Cells(m + 1, 2).Font.Italic
+
+            arrStandard(6, m) = xlWorkBook.Sheets.Item(3).Cells(m + 1, 3).Value
+            arrStandard(7, m) = xlWorkBook.Sheets.Item(3).Cells(m + 1, 3).HorizontalAlignment
+            arrStandard(8, m) = xlWorkBook.Sheets.Item(3).Cells(m + 1, 3).Interior.Color
+            arrStandard(9, m) = xlWorkBook.Sheets.Item(3).Cells(m + 1, 3).Font.Bold
+            arrStandard(10, m) = xlWorkBook.Sheets.Item(3).Cells(m + 1, 3).Font.Italic
+
+            arrStandard(11, m) = xlWorkBook.Sheets.Item(3).Cells(m + 1, 4).Value
+            arrStandard(12, m) = xlWorkBook.Sheets.Item(3).Cells(m + 1, 4).HorizontalAlignment
+            arrStandard(13, m) = xlWorkBook.Sheets.Item(3).Cells(m + 1, 4).Interior.Color
+            arrStandard(14, m) = xlWorkBook.Sheets.Item(3).Cells(m + 1, 4).Font.Bold
+            arrStandard(15, m) = xlWorkBook.Sheets.Item(3).Cells(m + 1, 4).Font.Italic
+
+            m = m + 1
+        Loop
+
+        Dim couponVal As Integer
+        couponVal = 1
 
         Dim i As Integer
         i = 1
@@ -239,108 +300,211 @@ Public Class MainForm
         xlWorkBook.ActiveSheet.Range("B" & i - 1 & ":G" & i - 1).Merge
         xlWorkBook.ActiveSheet.Range("H" & i - 1 & ":I" & i - 1).Merge
         xlWorkBook.ActiveSheet.Range("J" & i - 1 & ":K" & i - 1).Merge
+
+        xlWorkBook.ActiveSheet.Cells(i - 1, 2).Interior.Color = RGB(242, 242, 242)
+
         xlWorkBook.ActiveSheet.Cells(i - 1, 8).Value = "TECH. VERIFICATION"
         xlWorkBook.ActiveSheet.Cells(i - 1, 8).HorizontalAlignment = -4108
         xlWorkBook.ActiveSheet.Cells(i - 1, 8).Interior.Color = RGB(242, 242, 242)
         xlWorkBook.ActiveSheet.Cells(i - 1, 8).Font.Bold = True
+
         xlWorkBook.ActiveSheet.Cells(i - 1, 10).Value = "TIME & DATE"
         xlWorkBook.ActiveSheet.Cells(i - 1, 10).HorizontalAlignment = -4108
         xlWorkBook.ActiveSheet.Cells(i - 1, 10).Interior.Color = RGB(242, 242, 242)
         xlWorkBook.ActiveSheet.Cells(i - 1, 10).Font.Bold = True
 
-        Do Until CStr(xlWorkBook.ActiveSheet.Cells(i, 1).Value) = ""
+        Dim numericCnt As Integer = 0
+
+        Dim loopValue As Integer = i
+        Do Until CStr(xlWorkBook.ActiveSheet.Cells(loopValue, 1).Value) = ""
+            If IsNumeric(xlWorkBook.ActiveSheet.Cells(loopValue, 1).Value) Then
+                numericCnt = numericCnt + 1
+            End If
+
+            loopValue = loopValue + 1
+        Loop
+        loopValue = loopValue - 1
+
+        Dim numTotalTime As TimeSpan = New TimeSpan(0, 0, 0, 0, 0)
+        Dim txtTotalTime As TimeSpan = New TimeSpan(0, 0, 0, 0, 0)
+        Dim rollNumCnt As Integer = 0
+        Dim rollTxtCnt As Integer = 0
+        Dim avgNumTime As Double = 0.018
+        Dim avgTxtTime As Double = 0.733
+        Dim timeToComplete As Double = 0
+
+
+        For i = i To loopValue
+            Dim currentKey As String = xlWorkBook.ActiveSheet.Cells(i, 1).Value
+
             xlWorkBook.ActiveSheet.Range("H" & i & ":I" & i).Merge
             xlWorkBook.ActiveSheet.Range("J" & i & ":K" & i).Merge
-            If CStr(xlWorkBook.ActiveSheet.Cells(i, 1).Value) = "PLYHEAD" Then
+            If CStr(currentKey) = "PLYHEAD" Then
+                With xlWorkBook.ActiveSheet
+                    .Range("C" & i & ":D" & i).Merge
+                    .Range("E" & i & ":G" & i).Merge
+                    .Cells(i, 2).Value = "PLY"
+                    .Cells(i, 3).Value = "ORIENTATION"
+                    .Cells(i, 5).Value = "MATERIAL"
+                    .Cells(i, 8).Value = "TECH. VERIFICATION"
+                    .Cells(i, 10).Value = "TIME & DATE"
+                    .Range(xlWorkBook.ActiveSheet.Cells(i, 2), xlWorkBook.ActiveSheet.Cells(i, 10)).HorizontalAlignment = -4108
+                    .Range(xlWorkBook.ActiveSheet.Cells(i, 2), xlWorkBook.ActiveSheet.Cells(i, 10)).Interior.Color = RGB(242, 242, 242)
+                    .Range(xlWorkBook.ActiveSheet.Cells(i, 2), xlWorkBook.ActiveSheet.Cells(i, 10)).Font.Bold = True
+                End With
+
+            ElseIf IsNumeric(currentKey) Then
+                rollNumCnt = rollNumCnt + 1
+
+                Dim testStartTime As DateTime = Now()
+
+                timeToComplete = numericCnt * avgNumTime + (loopValue - i - numericCnt) * avgTxtTime
+                ToolStripStatusLabel1.Text = "Time To Complete (s): " & Math.Round(timeToComplete, 2) & " | Current Key #: " & currentKey
+
                 xlWorkBook.ActiveSheet.Range("C" & i & ":D" & i).Merge
                 xlWorkBook.ActiveSheet.Range("E" & i & ":G" & i).Merge
-                xlWorkBook.ActiveSheet.Cells(i, 2).Value = "PLY"
-                xlWorkBook.ActiveSheet.Cells(i, 3).Value = "ORIENTATION"
-                xlWorkBook.ActiveSheet.Cells(i, 5).Value = "MATERIAL"
-                xlWorkBook.ActiveSheet.Cells(i, 8).Value = "TECH. VERIFICATION"
-                xlWorkBook.ActiveSheet.Cells(i, 10).Value = "TIME & DATE"
-                xlWorkBook.ActiveSheet.Range(xlWorkBook.ActiveSheet.Cells(i, 2), xlWorkBook.ActiveSheet.Cells(i, 10)).HorizontalAlignment = -4108
-                xlWorkBook.ActiveSheet.Range(xlWorkBook.ActiveSheet.Cells(i, 2), xlWorkBook.ActiveSheet.Cells(i, 10)).Interior.Color = RGB(242, 242, 242)
-                xlWorkBook.ActiveSheet.Range(xlWorkBook.ActiveSheet.Cells(i, 2), xlWorkBook.ActiveSheet.Cells(i, 10)).Font.Bold = True
 
-            ElseIf IsNumeric(xlWorkBook.ActiveSheet.Cells(i, 1).Value) Then
-                xlWorkBook.ActiveSheet.Range("C" & i & ":D" & i).Merge
-                xlWorkBook.ActiveSheet.Range("E" & i & ":G" & i).Merge
+                Dim failedFind As Boolean = True
 
-                Dim matchLine As Integer
-                matchLine = 0
                 Dim z As Integer
-                z = 1
-                Do
-                    If CStr(xlWorkBook.Sheets.Item(2).Cells(z, 1).Value) = CStr(xlWorkBook.ActiveSheet.Cells(i, 1).Value) Then
-                        matchLine = z
+                For z = 1 To UBound(arrPlies, 2)
+                    If CStr(arrPlies(0, z)) = CStr(currentKey) Then
+                        xlWorkBook.ActiveSheet.Cells(i, 2).Value = arrPlies(1, z)
+                        xlWorkBook.ActiveSheet.Cells(i, 3).Value = arrPlies(2, z)
+                        xlWorkBook.ActiveSheet.Cells(i, 5).Value = arrPlies(3, z)
+                        failedFind = False
                     End If
-                    If z = 9999 Then
-                        MsgBox("Failed to match ply.", , "Error")
+                Next
+
+                xlWorkBook.ActiveSheet.Range(xlWorkBook.ActiveSheet.Cells(i, 2), xlWorkBook.ActiveSheet.Cells(i, 10)).HorizontalAlignment = -4108
+
+                Dim testDuration As TimeSpan = Now() - testStartTime
+                numTotalTime = numTotalTime + testDuration
+                avgNumTime = numTotalTime.TotalSeconds / rollNumCnt
+
+                If failedFind = True Then
+                    OptimizeCode_End()
+                    If MsgBox("Falied to file ply with key " & currentKey, vbOKCancel, "Error") = vbCancel Then
                         Exit Sub
                     End If
-                    z = z + 1
-                Loop Until matchLine <> 0
+                    OptimizeCode_Begin()
+                End If
 
-                xlWorkBook.ActiveSheet.Cells(i, 2).Value = xlWorkBook.Sheets.Item(2).Cells(matchLine, 3).Value
-                xlWorkBook.ActiveSheet.Cells(i, 3).Value = xlWorkBook.Sheets.Item(2).Cells(matchLine, 5).Value
-                xlWorkBook.ActiveSheet.Cells(i, 5).Value = xlWorkBook.Sheets.Item(2).Cells(matchLine, 4).Value
+                numericCnt = numericCnt - 1
 
-                xlWorkBook.ActiveSheet.Range(xlWorkBook.ActiveSheet.Cells(i, 2), xlWorkBook.ActiveSheet.Cells(i, 10)).HorizontalAlignment = -4108
-            Else
+            ElseIf currentKey = "CLEAR" Then
+                timeToComplete = numericCnt * avgNumTime + (loopValue - i - numericCnt) * avgTxtTime
+                ToolStripStatusLabel1.Text = "Time To Complete (s): " & Math.Round(timeToComplete, 2) & " | Current Key #: " & currentKey
+
+                xlWorkBook.ActiveSheet.Range("B" & i & ":K" & i).Merge
+
+            ElseIf currentKey = "TEST COUPON" Then
+                timeToComplete = numericCnt * avgNumTime + (loopValue - i - numericCnt) * avgTxtTime
+                ToolStripStatusLabel1.Text = "Time To Complete (s): " & Math.Round(timeToComplete, 2) & " | Current Key #: " & currentKey
+
                 xlWorkBook.ActiveSheet.Range("B" & i & ":G" & i).Merge
 
-                Dim matchLine2 As Integer
-                matchLine2 = 0
+                If couponVal < 10 Then
+                    xlWorkBook.ActiveSheet.Cells(i, 2).Value = "TEST COUPON - 0" & couponVal
+                Else
+                    xlWorkBook.ActiveSheet.Cells(i, 2).Value = "TEST COUPON - " & couponVal
+                End If
+
+                xlWorkBook.ActiveSheet.Cells(i, 2).HorizontalAlignment = -4108
+                couponVal = couponVal + 1
+
+            Else
+                rollTxtCnt = rollTxtCnt + 1
+                Dim testStartTime As DateTime = Now()
+
+                timeToComplete = numericCnt * avgNumTime + (loopValue - i - numericCnt) * avgTxtTime
+                ToolStripStatusLabel1.Text = "Time To Complete (s): " & Math.Round(timeToComplete, 2) & " | Current Key #: " & currentKey
+
+                xlWorkBook.ActiveSheet.Range("B" & i & ":G" & i).Merge
+
+                Dim failedFind As Boolean = True
+
                 Dim y As Integer
-                y = 1
-                Do
-                    If xlWorkBook.Sheets.Item(3).Cells(y, 1).Value = xlWorkBook.ActiveSheet.Cells(i, 1).Value Then
-                        matchLine2 = y
+                For y = 1 To UBound(arrStandard, 2)
+                    If CStr(arrStandard(0, y)) = CStr(currentKey) Then
+
+                        With xlWorkBook.ActiveSheet
+                            .Cells(i, 2).Value = arrStandard(1, y)
+                            .Cells(i, 2).HorizontalAlignment = arrStandard(2, y)
+                            .Cells(i, 2).Interior.Color = arrStandard(3, y)
+                            .Cells(i, 2).Font.Bold = arrStandard(4, y)
+                            .Cells(i, 2).Font.Italic = arrStandard(5, y)
+
+                            .Cells(i, 8).Value = arrStandard(6, y)
+                            .Cells(i, 8).HorizontalAlignment = arrStandard(7, y)
+                            .Cells(i, 8).Interior.Color = arrStandard(8, y)
+                            .Cells(i, 8).Font.Bold = arrStandard(9, y)
+                            .Cells(i, 8).Font.Italic = arrStandard(10, y)
+
+                            .Cells(i, 10).Value = arrStandard(11, y)
+                            .Cells(i, 10).HorizontalAlignment = arrStandard(12, y)
+                            .Cells(i, 10).Interior.Color = arrStandard(13, y)
+                            .Cells(i, 10).Font.Bold = arrStandard(14, y)
+                            .Cells(i, 10).Font.Italic = arrStandard(15, y)
+                        End With
+
+                        failedFind = False
                     End If
-                    If y = 9999 Then
-                        MsgBox("Failed to match ply.", , "Error")
+                Next
+
+
+                Dim testDuration As TimeSpan = Now() - testStartTime
+                txtTotalTime = txtTotalTime + testDuration
+                avgTxtTime = txtTotalTime.TotalSeconds / rollTxtCnt
+
+                If failedFind = True Then
+                    OptimizeCode_End()
+                    If MsgBox("Falied to file standard with key " & currentKey, vbOKCancel, "Error") = vbCancel Then
                         Exit Sub
                     End If
-                    y = y + 1
-                Loop Until matchLine2 <> 0
-
-                xlWorkBook.ActiveSheet.Cells(i, 2).Value = xlWorkBook.Sheets.Item(3).Cells(matchLine2, 2).Value
-                xlWorkBook.ActiveSheet.Cells(i, 2).HorizontalAlignment = xlWorkBook.Sheets.Item(3).Cells(matchLine2, 2).HorizontalAlignment
-                xlWorkBook.ActiveSheet.Cells(i, 2).Interior.Color = xlWorkBook.Sheets.Item(3).Cells(matchLine2, 2).Interior.Color
-                xlWorkBook.ActiveSheet.Cells(i, 2).Font.Bold = xlWorkBook.Sheets.Item(3).Cells(matchLine2, 2).Font.Bold
-                xlWorkBook.ActiveSheet.Cells(i, 2).Font.Italic = xlWorkBook.Sheets.Item(3).Cells(matchLine2, 2).Font.Italic
-
-                xlWorkBook.ActiveSheet.Cells(i, 8).Value = xlWorkBook.Sheets.Item(3).Cells(matchLine2, 3).Value
-                xlWorkBook.ActiveSheet.Cells(i, 8).HorizontalAlignment = xlWorkBook.Sheets.Item(3).Cells(matchLine2, 3).HorizontalAlignment
-                xlWorkBook.ActiveSheet.Cells(i, 8).Interior.Color = xlWorkBook.Sheets.Item(3).Cells(matchLine2, 3).Interior.Color
-                xlWorkBook.ActiveSheet.Cells(i, 8).Font.Bold = xlWorkBook.Sheets.Item(3).Cells(matchLine2, 3).Font.Bold
-                xlWorkBook.ActiveSheet.Cells(i, 8).Font.Italic = xlWorkBook.Sheets.Item(3).Cells(matchLine2, 3).Font.Italic
-
-                xlWorkBook.ActiveSheet.Cells(i, 10).Value = xlWorkBook.Sheets.Item(3).Cells(matchLine2, 4).Value
-                xlWorkBook.ActiveSheet.Cells(i, 10).HorizontalAlignment = xlWorkBook.Sheets.Item(3).Cells(matchLine2, 4).HorizontalAlignment
-                xlWorkBook.ActiveSheet.Cells(i, 10).Interior.Color = xlWorkBook.Sheets.Item(3).Cells(matchLine2, 4).Interior.Color
-                xlWorkBook.ActiveSheet.Cells(i, 10).Font.Bold = xlWorkBook.Sheets.Item(3).Cells(matchLine2, 4).Font.Bold
-                xlWorkBook.ActiveSheet.Cells(i, 10).Font.Italic = xlWorkBook.Sheets.Item(3).Cells(matchLine2, 4).Font.Italic
-
-
+                    OptimizeCode_Begin()
+                End If
 
             End If
-            i = i + 1
-        Loop
 
-        xlWorkBook.ActiveSheet.Range(xlWorkBook.ActiveSheet.Cells(keyLine, 2), xlWorkBook.ActiveSheet.Cells(i - 1, 11)).Font.Size = 14
-        xlWorkBook.ActiveSheet.Range(xlWorkBook.ActiveSheet.Cells(keyLine, 2), xlWorkBook.ActiveSheet.Cells(i - 1, 11)).RowHeight = 36
-        xlWorkBook.ActiveSheet.Range(xlWorkBook.ActiveSheet.Cells(keyLine, 2), xlWorkBook.ActiveSheet.Cells(i - 1, 11)).VerticalAlignment = -4108
-        xlWorkBook.ActiveSheet.Range(xlWorkBook.ActiveSheet.Cells(keyLine, 2), xlWorkBook.ActiveSheet.Cells(i - 1, 11)).Borders.LineStyle = 1
-        xlWorkBook.ActiveSheet.Range(xlWorkBook.ActiveSheet.Cells(keyLine, 2), xlWorkBook.ActiveSheet.Cells(i - 1, 11)).Borders.Color = 0
-        xlWorkBook.ActiveSheet.Range(xlWorkBook.ActiveSheet.Cells(keyLine, 2), xlWorkBook.ActiveSheet.Cells(i - 1, 11)).Borders.Weight = 2
-        xlWorkBook.ActiveSheet.Range(xlWorkBook.ActiveSheet.Cells(keyLine, 2), xlWorkBook.ActiveSheet.Cells(i - 1, 11)).WrapText = True
+        Next
+
+        With xlWorkBook.ActiveSheet
+            .Range(xlWorkBook.ActiveSheet.Cells(keyLine, 2), xlWorkBook.ActiveSheet.Cells(i - 1, 11)).Font.Size = 14
+            .Range(xlWorkBook.ActiveSheet.Cells(keyLine, 2), xlWorkBook.ActiveSheet.Cells(i - 1, 11)).RowHeight = 36
+            .Range(xlWorkBook.ActiveSheet.Cells(keyLine, 2), xlWorkBook.ActiveSheet.Cells(i - 1, 11)).VerticalAlignment = -4108
+            .Range(xlWorkBook.ActiveSheet.Cells(keyLine, 2), xlWorkBook.ActiveSheet.Cells(i - 1, 11)).Borders.LineStyle = 1
+            .Range(xlWorkBook.ActiveSheet.Cells(keyLine, 2), xlWorkBook.ActiveSheet.Cells(i - 1, 11)).Borders.Color = 0
+            .Range(xlWorkBook.ActiveSheet.Cells(keyLine, 2), xlWorkBook.ActiveSheet.Cells(i - 1, 11)).Borders.Weight = 2
+            .Range(xlWorkBook.ActiveSheet.Cells(keyLine, 2), xlWorkBook.ActiveSheet.Cells(i - 1, 11)).WrapText = True
+        End With
+
+        Call OptimizeCode_End()
+
+        Dim duration As TimeSpan = Now() - startTime
+        ToolStripStatusLabel1.Text = "Total Duration (s): " & Math.Round(duration.TotalSeconds, 2)
+    End Sub
+
+    Sub OptimizeCode_Begin()
+
+        Excel.ScreenUpdating = False
+
+        EventState = Excel.EnableEvents
+        Excel.EnableEvents = False
+
+        CalcState = Excel.Calculation
+        Excel.Calculation = -4135
+
+        PageBreakState = Excel.ActiveSheet.DisplayPageBreaks
+        Excel.ActiveSheet.DisplayPageBreaks = False
 
     End Sub
 
-    Private Sub GroupBox2_Enter(sender As Object, e As EventArgs) Handles GroupBox2.Enter
-
+    Sub OptimizeCode_End()
+        Excel.ActiveSheet.DisplayPageBreaks = PageBreakState
+        Excel.Calculation = CalcState
+        Excel.EnableEvents = EventState
+        Excel.ScreenUpdating = True
     End Sub
 
     Private Sub MainForm_Load(sender As Object, e As EventArgs) Handles MyBase.Load

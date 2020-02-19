@@ -38,6 +38,8 @@ Partial Class MainForm
         Me.TableLayoutPanel3 = New System.Windows.Forms.TableLayoutPanel()
         Me.GroupBox3 = New System.Windows.Forms.GroupBox()
         Me.TableLayoutPanel4 = New System.Windows.Forms.TableLayoutPanel()
+        Me.StatusStrip1 = New System.Windows.Forms.StatusStrip()
+        Me.ToolStripStatusLabel1 = New System.Windows.Forms.ToolStripStatusLabel()
         Me.GroupBox1.SuspendLayout()
         Me.GroupBox2.SuspendLayout()
         Me.TableLayoutPanel1.SuspendLayout()
@@ -45,6 +47,7 @@ Partial Class MainForm
         Me.TableLayoutPanel3.SuspendLayout()
         Me.GroupBox3.SuspendLayout()
         Me.TableLayoutPanel4.SuspendLayout()
+        Me.StatusStrip1.SuspendLayout()
         Me.SuspendLayout()
         '
         'FilePath
@@ -216,15 +219,31 @@ Partial Class MainForm
         Me.TableLayoutPanel4.Size = New System.Drawing.Size(293, 85)
         Me.TableLayoutPanel4.TabIndex = 0
         '
+        'StatusStrip1
+        '
+        Me.StatusStrip1.Items.AddRange(New System.Windows.Forms.ToolStripItem() {Me.ToolStripStatusLabel1})
+        Me.StatusStrip1.Location = New System.Drawing.Point(0, 209)
+        Me.StatusStrip1.Name = "StatusStrip1"
+        Me.StatusStrip1.Size = New System.Drawing.Size(671, 22)
+        Me.StatusStrip1.TabIndex = 10
+        Me.StatusStrip1.Text = "StatusStrip1"
+        '
+        'ToolStripStatusLabel1
+        '
+        Me.ToolStripStatusLabel1.Name = "ToolStripStatusLabel1"
+        Me.ToolStripStatusLabel1.Size = New System.Drawing.Size(48, 17)
+        Me.ToolStripStatusLabel1.Text = "Status..."
+        '
         'MainForm
         '
         Me.AutoScaleDimensions = New System.Drawing.SizeF(6.0!, 13.0!)
         Me.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font
         Me.ClientSize = New System.Drawing.Size(671, 231)
+        Me.Controls.Add(Me.StatusStrip1)
         Me.Controls.Add(Me.TableLayoutPanel2)
         Me.Icon = CType(resources.GetObject("$this.Icon"), System.Drawing.Icon)
         Me.Name = "MainForm"
-        Me.Text = "Laminate Schedule Update"
+        Me.Text = "Laminate Schedule Update 2.0"
         Me.GroupBox1.ResumeLayout(False)
         Me.GroupBox1.PerformLayout()
         Me.GroupBox2.ResumeLayout(False)
@@ -234,7 +253,10 @@ Partial Class MainForm
         Me.TableLayoutPanel3.ResumeLayout(False)
         Me.GroupBox3.ResumeLayout(False)
         Me.TableLayoutPanel4.ResumeLayout(False)
+        Me.StatusStrip1.ResumeLayout(False)
+        Me.StatusStrip1.PerformLayout()
         Me.ResumeLayout(False)
+        Me.PerformLayout()
 
     End Sub
 
@@ -253,4 +275,6 @@ Partial Class MainForm
     Friend WithEvents TableLayoutPanel3 As TableLayoutPanel
     Friend WithEvents GroupBox3 As GroupBox
     Friend WithEvents TableLayoutPanel4 As TableLayoutPanel
+    Friend WithEvents StatusStrip1 As StatusStrip
+    Friend WithEvents ToolStripStatusLabel1 As ToolStripStatusLabel
 End Class
