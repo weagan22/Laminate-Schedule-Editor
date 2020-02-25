@@ -281,9 +281,6 @@ Public Class MainForm
             m = m + 1
         Loop
 
-        Dim couponVal As Integer
-        couponVal = 1
-
         Dim i As Integer
         i = 1
         Dim keyLine As Integer
@@ -398,21 +395,6 @@ Public Class MainForm
 
                 xlWorkBook.ActiveSheet.Range("B" & i & ":K" & i).Merge
 
-            ElseIf currentKey = "TEST COUPON" Then
-                timeToComplete = numericCnt * avgNumTime + (loopValue - i - numericCnt) * avgTxtTime
-                ToolStripStatusLabel1.Text = "Time To Complete (s): " & Math.Round(timeToComplete, 2) & " | Current Key #: " & currentKey
-
-                xlWorkBook.ActiveSheet.Range("B" & i & ":G" & i).Merge
-
-                If couponVal < 10 Then
-                    xlWorkBook.ActiveSheet.Cells(i, 2).Value = "TEST COUPON - 0" & couponVal
-                Else
-                    xlWorkBook.ActiveSheet.Cells(i, 2).Value = "TEST COUPON - " & couponVal
-                End If
-
-                xlWorkBook.ActiveSheet.Cells(i, 2).HorizontalAlignment = -4108
-                couponVal = couponVal + 1
-
             Else
                 rollTxtCnt = rollTxtCnt + 1
                 Dim testStartTime As DateTime = Now()
@@ -509,5 +491,84 @@ Public Class MainForm
 
     Private Sub MainForm_Load(sender As Object, e As EventArgs) Handles MyBase.Load
 
+    End Sub
+
+    Sub buildUpRoll()
+        Dim totalRows As Integer = 2
+        Dim cellVal As String = Excel.Cells(1, 2).Value
+
+        Do While cellVal <> ""
+            cellVal = Excel.Cells(totalRows, 2).Value
+            totalRows = totalRows + 1
+        Loop
+
+        totalRows = totalRows - 2
+
+        If Excel.Selection.Row < totalRows Then
+            cellVal = Excel.Cells(Excel.Selection.Row, 2).Value
+        Else
+            MsgBox("Selected row is beyond the end of the table", vbOKOnly, "Error")
+            Exit Sub
+        End If
+
+        Dim seqName As String = Strings.Right(cellVal, Len(cellVal) - InStr(1, cellVal, "."))
+
+        Dim rowCnt As Integer = 0
+        Dim rowStart As Integer = 0
+
+        Dim lastRow As Integer = 0
+
+        Dim i As Integer
+        For i = 2 To totalRows
+            cellVal = Excel.Cells(i, 2).Value
+
+            Dim testVal As String = Strings.Right(cellVal, Len(cellVal) - InStr(1, cellVal, "."))
+
+            If testVal = seqName Then
+                If rowStart = 0 Then
+                    rowStart = i
+                    lastRow = i
+                ElseIf i <> lastRow + 1 Then
+                    MsgBox("The selected sequence is non-continuous; to roll up a sequence it must be continuous.", vbOKOnly, "Error")
+                    Exit Sub
+                End If
+
+                lastRow = i
+                rowCnt = rowCnt + 1
+            End If
+
+        Next
+
+        If rowCnt = 1 Then
+            MsgBox("The selected sequence only has 1 row.", vbOKOnly, "Error")
+            Exit Sub
+        End If
+
+        Excel.Cells(rowStart, 3).Value = seqName & " (A-" & retLetter(rowCnt) & " / " & rowCnt & " PCS)"
+
+        For i = 1 To rowCnt - 1
+            Excel.Rows(rowStart + 1).EntireRow.Delete
+        Next
+
+        For i = 1 To totalRows - rowCnt
+            Excel.Cells(i + 1, 1).Value = i
+        Next
+
+    End Sub
+
+    Function retLetter(inNumber As Integer) As String
+        Dim letterVal As String
+
+        If inNumber > 26 Then
+            letterVal = Chr(64 + Math.Ceiling(inNumber / 26) - 1) & Chr(64 + inNumber - ((Math.Ceiling(inNumber / 26) - 1) * 26))
+        Else
+            letterVal = Chr(64 + inNumber)
+        End If
+
+        Return letterVal
+    End Function
+
+    Private Sub Btn_buildUpRoll_Click(sender As Object, e As EventArgs) Handles Btn_buildUpRoll.Click
+        Call buildUpRoll()
     End Sub
 End Class
