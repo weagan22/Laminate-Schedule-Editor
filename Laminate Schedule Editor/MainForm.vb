@@ -2,14 +2,18 @@
 
 Public Class MainForm
     Dim xlWorkBook As Excel.Workbook
-    Dim Excel As Object
+    Dim Excel As Object = Nothing
 
     Public CalcState As Long
     Public EventState As Boolean
     Public PageBreakState As Boolean
 
 
+    Private Sub MainForm_Load(sender As Object, e As EventArgs) Handles MyBase.Load
+        Dim vers As Version = My.Application.Info.Version
+        Me.Text = "Laminate Schedule Update " & vers.Major & "." & vers.Minor & "." & vers.Build
 
+    End Sub
 
     Private Sub Btn_Browse_Click(sender As Object, e As EventArgs) Handles Btn_Browse.Click
         If OpenFileDialog.ShowDialog() = System.Windows.Forms.DialogResult.OK Then
@@ -116,14 +120,25 @@ Public Class MainForm
         xlWorkBook.Worksheets.Item(1).Activate
         xlWorkBook.ActiveSheet.PageSetup.DifferentFirstPageHeaderFooter = True
 
+        Dim docNum As String = xlWorkBook.ActiveSheet.Cells(3, 4).Value
+        Dim docRev As String = xlWorkBook.ActiveSheet.Cells(3, 7).Value
+        Dim docTitle As String = xlWorkBook.ActiveSheet.Cells(4, 4).Value
+        Dim customerName As String = xlWorkBook.ActiveSheet.Cells(6, 4).Value
+        Dim prodNum As String = xlWorkBook.ActiveSheet.Cells(8, 4).Value
+        Dim prodNomenclature As String = xlWorkBook.ActiveSheet.Cells(9, 4).Value
+
         Dim leftFooter As String
-        leftFooter = "&12&""Calibri""&B" & "Doc. No. " & xlWorkBook.ActiveSheet.Cells(3, 4).Value & "_" & xlWorkBook.ActiveSheet.Cells(3, 7).Value
+        leftFooter = "&12&""Calibri""&B" & "Doc. No. " & docNum & "_" & docRev
 
         xlWorkBook.ActiveSheet.PageSetup.leftFooter = leftFooter
         xlWorkBook.ActiveSheet.PageSetup.FirstPage.leftFooter.Text = leftFooter
 
         Dim rightHeader As String
-        rightHeader = "&18&""Calibri""&B" & vbCr & xlWorkBook.ActiveSheet.Cells(3, 4).Value & "_" & xlWorkBook.ActiveSheet.Cells(3, 7).Value & " | " & xlWorkBook.ActiveSheet.Cells(4, 4).Value & vbCr & xlWorkBook.ActiveSheet.Cells(6, 4).Value & vbCr & xlWorkBook.ActiveSheet.Cells(8, 4).Value & " | " & xlWorkBook.ActiveSheet.Cells(9, 4).Value
+        rightHeader = "&18&""Calibri""&B" & vbCr &
+            docNum & "_" & docRev & " | " & docTitle & vbCr &
+            customerName & vbCr &
+            prodNum & " | " & prodNomenclature
+
         xlWorkBook.ActiveSheet.PageSetup.rightHeader = rightHeader
         xlWorkBook.ActiveSheet.PageSetup.FirstPage.rightHeader.Text = rightHeader
 
@@ -170,6 +185,8 @@ Public Class MainForm
                 sequenceName = xlWorkBook.Sheets.Item(2).Cells(plyBookNum, 2).Value
 
                 If firstDebulk = False And debulkRate = 2 Then
+                    xlWorkBook.ActiveSheet.Cells(currentLine, 1).Value = "TECH"
+                    currentLine = currentLine + 1
                     xlWorkBook.ActiveSheet.Cells(currentLine, 1).Value = "BULK"
                     currentLine = currentLine + 1
                     xlWorkBook.ActiveSheet.Cells(currentLine, 1).Value = "SECONDARY"
@@ -184,6 +201,8 @@ Public Class MainForm
             End If
 
             If debulkRate = debulkConst + 1 Then
+                xlWorkBook.ActiveSheet.Cells(currentLine, 1).Value = "TECH"
+                currentLine = currentLine + 1
                 xlWorkBook.ActiveSheet.Cells(currentLine, 1).Value = "BULK"
                 currentLine = currentLine + 1
                 xlWorkBook.ActiveSheet.Cells(currentLine, 1).Value = "SECONDARY"
@@ -296,9 +315,14 @@ Public Class MainForm
 
         xlWorkBook.ActiveSheet.Range("B" & i - 1 & ":G" & i - 1).Merge
         xlWorkBook.ActiveSheet.Range("H" & i - 1 & ":I" & i - 1).Merge
-        xlWorkBook.ActiveSheet.Range("J" & i - 1 & ":K" & i - 1).Merge
+        xlWorkBook.ActiveSheet.Range("J" & i - 1 & ":L" & i - 1).Merge
 
         xlWorkBook.ActiveSheet.Cells(i - 1, 2).Interior.Color = RGB(242, 242, 242)
+
+        xlWorkBook.ActiveSheet.Cells(i - 1, 2).Value = "DESCRIPTION"
+        xlWorkBook.ActiveSheet.Cells(i - 1, 2).HorizontalAlignment = -4108
+        xlWorkBook.ActiveSheet.Cells(i - 1, 2).Interior.Color = RGB(242, 242, 242)
+        xlWorkBook.ActiveSheet.Cells(i - 1, 2).Font.Bold = True
 
         xlWorkBook.ActiveSheet.Cells(i - 1, 8).Value = "TECH. VERIFICATION"
         xlWorkBook.ActiveSheet.Cells(i - 1, 8).HorizontalAlignment = -4108
@@ -335,7 +359,7 @@ Public Class MainForm
             Dim currentKey As String = xlWorkBook.ActiveSheet.Cells(i, 1).Value
 
             xlWorkBook.ActiveSheet.Range("H" & i & ":I" & i).Merge
-            xlWorkBook.ActiveSheet.Range("J" & i & ":K" & i).Merge
+            xlWorkBook.ActiveSheet.Range("J" & i & ":L" & i).Merge
             If CStr(currentKey) = "PLYHEAD" Then
                 With xlWorkBook.ActiveSheet
                     .Range("C" & i & ":D" & i).Merge
@@ -393,7 +417,7 @@ Public Class MainForm
                 timeToComplete = numericCnt * avgNumTime + (loopValue - i - numericCnt) * avgTxtTime
                 ToolStripStatusLabel1.Text = "Time To Complete (s): " & Math.Round(timeToComplete, 2) & " | Current Key #: " & currentKey
 
-                xlWorkBook.ActiveSheet.Range("B" & i & ":K" & i).Merge
+                xlWorkBook.ActiveSheet.Range("B" & i & ":L" & i).Merge
 
             Else
                 rollTxtCnt = rollTxtCnt + 1
@@ -452,13 +476,13 @@ Public Class MainForm
         Next
 
         With xlWorkBook.ActiveSheet
-            .Range(xlWorkBook.ActiveSheet.Cells(keyLine, 2), xlWorkBook.ActiveSheet.Cells(i - 1, 11)).Font.Size = 14
-            .Range(xlWorkBook.ActiveSheet.Cells(keyLine, 2), xlWorkBook.ActiveSheet.Cells(i - 1, 11)).RowHeight = 36
-            .Range(xlWorkBook.ActiveSheet.Cells(keyLine, 2), xlWorkBook.ActiveSheet.Cells(i - 1, 11)).VerticalAlignment = -4108
-            .Range(xlWorkBook.ActiveSheet.Cells(keyLine, 2), xlWorkBook.ActiveSheet.Cells(i - 1, 11)).Borders.LineStyle = 1
-            .Range(xlWorkBook.ActiveSheet.Cells(keyLine, 2), xlWorkBook.ActiveSheet.Cells(i - 1, 11)).Borders.Color = 0
-            .Range(xlWorkBook.ActiveSheet.Cells(keyLine, 2), xlWorkBook.ActiveSheet.Cells(i - 1, 11)).Borders.Weight = 2
-            .Range(xlWorkBook.ActiveSheet.Cells(keyLine, 2), xlWorkBook.ActiveSheet.Cells(i - 1, 11)).WrapText = True
+            .Range(xlWorkBook.ActiveSheet.Cells(keyLine, 2), xlWorkBook.ActiveSheet.Cells(i - 1, 12)).Font.Size = 14
+            .Range(xlWorkBook.ActiveSheet.Cells(keyLine, 2), xlWorkBook.ActiveSheet.Cells(i - 1, 12)).RowHeight = 36
+            .Range(xlWorkBook.ActiveSheet.Cells(keyLine, 2), xlWorkBook.ActiveSheet.Cells(i - 1, 12)).VerticalAlignment = -4108
+            .Range(xlWorkBook.ActiveSheet.Cells(keyLine, 2), xlWorkBook.ActiveSheet.Cells(i - 1, 12)).Borders.LineStyle = 1
+            .Range(xlWorkBook.ActiveSheet.Cells(keyLine, 2), xlWorkBook.ActiveSheet.Cells(i - 1, 12)).Borders.Color = 0
+            .Range(xlWorkBook.ActiveSheet.Cells(keyLine, 2), xlWorkBook.ActiveSheet.Cells(i - 1, 12)).Borders.Weight = 2
+            .Range(xlWorkBook.ActiveSheet.Cells(keyLine, 2), xlWorkBook.ActiveSheet.Cells(i - 1, 12)).WrapText = True
         End With
 
         Call OptimizeCode_End()
@@ -489,9 +513,7 @@ Public Class MainForm
         Excel.ScreenUpdating = True
     End Sub
 
-    Private Sub MainForm_Load(sender As Object, e As EventArgs) Handles MyBase.Load
 
-    End Sub
 
     Sub buildUpRoll()
         Dim totalRows As Integer = 2
