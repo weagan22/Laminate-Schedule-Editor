@@ -254,7 +254,6 @@ Public Class MainForm
         xlWorkBook.Worksheets.Item(1).Activate
 
 
-
         'Gets values from PlyBook tab
         Dim arrPlies(,) As String
         ReDim arrPlies(3, 0)
@@ -300,6 +299,7 @@ Public Class MainForm
             m = m + 1
         Loop
 
+        'Find where the key line is
         Dim i As Integer
         i = 1
         Dim keyLine As Integer
@@ -310,9 +310,22 @@ Public Class MainForm
             i = i + 1
         Loop Until keyLine > 0
 
-        xlWorkBook.ActiveSheet.Range("B" & i - 1 & ":K9999").UnMerge
-        xlWorkBook.ActiveSheet.Range("B" & i - 1 & ":K9999").Clear
 
+        'Get the rows that the user would like to run
+        Dim ExcelStartRow As Integer = CInt(Txt_ExcelStartRow.Text)
+        Dim ExcelEndRow As Integer = CInt(Txt_ExcelEndRow.Text)
+
+        If ExcelStartRow < i - 1 Then ExcelStartRow = i - 1
+        If ExcelEndRow < i - 1 Then ExcelEndRow = 9999
+
+
+        'Unmerge the rows that the user would like to update
+        xlWorkBook.ActiveSheet.Range("B" & ExcelStartRow & ":K" & ExcelEndRow).UnMerge
+        xlWorkBook.ActiveSheet.Range("B" & ExcelStartRow & ":K" & ExcelEndRow).Clear
+
+
+
+        'Update the key row
         xlWorkBook.ActiveSheet.Range("B" & i - 1 & ":G" & i - 1).Merge
         xlWorkBook.ActiveSheet.Range("H" & i - 1 & ":I" & i - 1).Merge
         xlWorkBook.ActiveSheet.Range("J" & i - 1 & ":L" & i - 1).Merge
@@ -334,6 +347,9 @@ Public Class MainForm
         xlWorkBook.ActiveSheet.Cells(i - 1, 10).Interior.Color = RGB(242, 242, 242)
         xlWorkBook.ActiveSheet.Cells(i - 1, 10).Font.Bold = True
 
+
+
+        'Find the end of the file
         Dim numericCnt As Integer = 0
 
         Dim loopValue As Integer = i
@@ -354,123 +370,141 @@ Public Class MainForm
         Dim avgTxtTime As Double = 0.733
         Dim timeToComplete As Double = 0
 
+        Dim plyCount As Integer = 0
 
         For i = i To loopValue
             Dim currentKey As String = xlWorkBook.ActiveSheet.Cells(i, 1).Value
 
-            xlWorkBook.ActiveSheet.Range("H" & i & ":I" & i).Merge
-            xlWorkBook.ActiveSheet.Range("J" & i & ":L" & i).Merge
-            If CStr(currentKey) = "PLYHEAD" Then
-                With xlWorkBook.ActiveSheet
-                    .Range("C" & i & ":D" & i).Merge
-                    .Range("E" & i & ":G" & i).Merge
-                    .Cells(i, 2).Value = "PLY"
-                    .Cells(i, 3).Value = "ORIENTATION"
-                    .Cells(i, 5).Value = "MATERIAL"
-                    .Cells(i, 8).Value = "TECH. VERIFICATION"
-                    .Cells(i, 10).Value = "TIME & DATE"
-                    .Range(xlWorkBook.ActiveSheet.Cells(i, 2), xlWorkBook.ActiveSheet.Cells(i, 10)).HorizontalAlignment = -4108
-                    .Range(xlWorkBook.ActiveSheet.Cells(i, 2), xlWorkBook.ActiveSheet.Cells(i, 10)).Interior.Color = RGB(242, 242, 242)
-                    .Range(xlWorkBook.ActiveSheet.Cells(i, 2), xlWorkBook.ActiveSheet.Cells(i, 10)).Font.Bold = True
-                End With
+            If i >= ExcelStartRow And i <= ExcelEndRow Then
+
+                xlWorkBook.ActiveSheet.Range("H" & i & ":I" & i).Merge
+                xlWorkBook.ActiveSheet.Range("J" & i & ":L" & i).Merge
+                If CStr(currentKey) = "PLYHEAD" Then
+                    With xlWorkBook.ActiveSheet
+                        .Range("C" & i & ":D" & i).Merge
+                        .Range("E" & i & ":G" & i).Merge
+                        .Cells(i, 2).Value = "PLY"
+                        .Cells(i, 3).Value = "ORIENTATION"
+                        .Cells(i, 5).Value = "MATERIAL"
+                        .Cells(i, 8).Value = "TECH. VERIFICATION"
+                        .Cells(i, 10).Value = "TIME & DATE"
+                        .Range(xlWorkBook.ActiveSheet.Cells(i, 2), xlWorkBook.ActiveSheet.Cells(i, 10)).HorizontalAlignment = -4108
+                        .Range(xlWorkBook.ActiveSheet.Cells(i, 2), xlWorkBook.ActiveSheet.Cells(i, 10)).Interior.Color = RGB(242, 242, 242)
+                        .Range(xlWorkBook.ActiveSheet.Cells(i, 2), xlWorkBook.ActiveSheet.Cells(i, 10)).Font.Bold = True
+                    End With
+
+                ElseIf IsNumeric(currentKey) Then
+                    plyCount += 1
+
+                    rollNumCnt = rollNumCnt + 1
+
+                    Dim testStartTime As DateTime = Now()
+
+                    timeToComplete = numericCnt * avgNumTime + (loopValue - i - numericCnt) * avgTxtTime
+                    ToolStripStatusLabel1.Text = "Time To Complete (s): " & Math.Round(timeToComplete, 2) & " | Current Key #: " & currentKey
+
+                    xlWorkBook.ActiveSheet.Range("C" & i & ":D" & i).Merge
+                    xlWorkBook.ActiveSheet.Range("E" & i & ":G" & i).Merge
+
+                    Dim failedFind As Boolean = True
+
+                    Dim z As Integer
+                    For z = 1 To UBound(arrPlies, 2)
+                        If CStr(arrPlies(0, z)) = CStr(currentKey) Then
+                            xlWorkBook.ActiveSheet.Cells(i, 2).Value = arrPlies(1, z)
+                            xlWorkBook.ActiveSheet.Cells(i, 3).Value = arrPlies(2, z)
+                            xlWorkBook.ActiveSheet.Cells(i, 5).Value = arrPlies(3, z)
+                            failedFind = False
+                        End If
+                    Next
+
+                    xlWorkBook.ActiveSheet.Range(xlWorkBook.ActiveSheet.Cells(i, 2), xlWorkBook.ActiveSheet.Cells(i, 10)).HorizontalAlignment = -4108
+
+                    Dim testDuration As TimeSpan = Now() - testStartTime
+                    numTotalTime = numTotalTime + testDuration
+                    avgNumTime = numTotalTime.TotalSeconds / rollNumCnt
+
+                    If failedFind = True Then
+                        OptimizeCode_End()
+                        If MsgBox("Falied to file ply with key " & currentKey, vbOKCancel, "Error") = vbCancel Then
+                            Exit Sub
+                        End If
+                        OptimizeCode_Begin()
+                    End If
+
+                    numericCnt = numericCnt - 1
+
+                ElseIf currentKey = "CLEAR" Then
+                    timeToComplete = numericCnt * avgNumTime + (loopValue - i - numericCnt) * avgTxtTime
+                    ToolStripStatusLabel1.Text = "Time To Complete (s): " & Math.Round(timeToComplete, 2) & " | Current Key #: " & currentKey
+
+                    xlWorkBook.ActiveSheet.Range("B" & i & ":L" & i).Merge
+
+                Else
+                    rollTxtCnt = rollTxtCnt + 1
+                    Dim testStartTime As DateTime = Now()
+
+                    timeToComplete = numericCnt * avgNumTime + (loopValue - i - numericCnt) * avgTxtTime
+                    ToolStripStatusLabel1.Text = "Time To Complete (s): " & Math.Round(timeToComplete, 2) & " | Current Key #: " & currentKey
+
+                    xlWorkBook.ActiveSheet.Range("B" & i & ":G" & i).Merge
+
+                    Dim failedFind As Boolean = True
+
+                    Dim y As Integer
+                    For y = 1 To UBound(arrStandard, 2)
+                        If CStr(arrStandard(0, y)) = CStr(currentKey) Then
+
+                            With xlWorkBook.ActiveSheet
+
+                                If currentKey = "BULK" Then
+                                    .Cells(i, 2).Value = arrStandard(1, y) & " || PLY COUNT: " & plyCount
+                                    plyCount = 0
+                                Else
+                                    .Cells(i, 2).Value = arrStandard(1, y)
+                                End If
+
+                                .Cells(i, 2).HorizontalAlignment = arrStandard(2, y)
+                                .Cells(i, 2).Interior.Color = arrStandard(3, y)
+                                .Cells(i, 2).Font.Bold = arrStandard(4, y)
+                                .Cells(i, 2).Font.Italic = arrStandard(5, y)
+
+                                .Cells(i, 8).Value = arrStandard(6, y)
+                                .Cells(i, 8).HorizontalAlignment = arrStandard(7, y)
+                                .Cells(i, 8).Interior.Color = arrStandard(8, y)
+                                .Cells(i, 8).Font.Bold = arrStandard(9, y)
+                                .Cells(i, 8).Font.Italic = arrStandard(10, y)
+
+                                .Cells(i, 10).Value = arrStandard(11, y)
+                                .Cells(i, 10).HorizontalAlignment = arrStandard(12, y)
+                                .Cells(i, 10).Interior.Color = arrStandard(13, y)
+                                .Cells(i, 10).Font.Bold = arrStandard(14, y)
+                                .Cells(i, 10).Font.Italic = arrStandard(15, y)
+                            End With
+
+                            failedFind = False
+                        End If
+                    Next
+
+
+                    Dim testDuration As TimeSpan = Now() - testStartTime
+                    txtTotalTime = txtTotalTime + testDuration
+                    avgTxtTime = txtTotalTime.TotalSeconds / rollTxtCnt
+
+                    If failedFind = True Then
+                        OptimizeCode_End()
+                        If MsgBox("Falied to file standard with key " & currentKey, vbOKCancel, "Error") = vbCancel Then
+                            Exit Sub
+                        End If
+                        OptimizeCode_Begin()
+                    End If
+
+                End If
 
             ElseIf IsNumeric(currentKey) Then
-                rollNumCnt = rollNumCnt + 1
-
-                Dim testStartTime As DateTime = Now()
-
-                timeToComplete = numericCnt * avgNumTime + (loopValue - i - numericCnt) * avgTxtTime
-                ToolStripStatusLabel1.Text = "Time To Complete (s): " & Math.Round(timeToComplete, 2) & " | Current Key #: " & currentKey
-
-                xlWorkBook.ActiveSheet.Range("C" & i & ":D" & i).Merge
-                xlWorkBook.ActiveSheet.Range("E" & i & ":G" & i).Merge
-
-                Dim failedFind As Boolean = True
-
-                Dim z As Integer
-                For z = 1 To UBound(arrPlies, 2)
-                    If CStr(arrPlies(0, z)) = CStr(currentKey) Then
-                        xlWorkBook.ActiveSheet.Cells(i, 2).Value = arrPlies(1, z)
-                        xlWorkBook.ActiveSheet.Cells(i, 3).Value = arrPlies(2, z)
-                        xlWorkBook.ActiveSheet.Cells(i, 5).Value = arrPlies(3, z)
-                        failedFind = False
-                    End If
-                Next
-
-                xlWorkBook.ActiveSheet.Range(xlWorkBook.ActiveSheet.Cells(i, 2), xlWorkBook.ActiveSheet.Cells(i, 10)).HorizontalAlignment = -4108
-
-                Dim testDuration As TimeSpan = Now() - testStartTime
-                numTotalTime = numTotalTime + testDuration
-                avgNumTime = numTotalTime.TotalSeconds / rollNumCnt
-
-                If failedFind = True Then
-                    OptimizeCode_End()
-                    If MsgBox("Falied to file ply with key " & currentKey, vbOKCancel, "Error") = vbCancel Then
-                        Exit Sub
-                    End If
-                    OptimizeCode_Begin()
-                End If
-
-                numericCnt = numericCnt - 1
-
-            ElseIf currentKey = "CLEAR" Then
-                timeToComplete = numericCnt * avgNumTime + (loopValue - i - numericCnt) * avgTxtTime
-                ToolStripStatusLabel1.Text = "Time To Complete (s): " & Math.Round(timeToComplete, 2) & " | Current Key #: " & currentKey
-
-                xlWorkBook.ActiveSheet.Range("B" & i & ":L" & i).Merge
-
-            Else
-                rollTxtCnt = rollTxtCnt + 1
-                Dim testStartTime As DateTime = Now()
-
-                timeToComplete = numericCnt * avgNumTime + (loopValue - i - numericCnt) * avgTxtTime
-                ToolStripStatusLabel1.Text = "Time To Complete (s): " & Math.Round(timeToComplete, 2) & " | Current Key #: " & currentKey
-
-                xlWorkBook.ActiveSheet.Range("B" & i & ":G" & i).Merge
-
-                Dim failedFind As Boolean = True
-
-                Dim y As Integer
-                For y = 1 To UBound(arrStandard, 2)
-                    If CStr(arrStandard(0, y)) = CStr(currentKey) Then
-
-                        With xlWorkBook.ActiveSheet
-                            .Cells(i, 2).Value = arrStandard(1, y)
-                            .Cells(i, 2).HorizontalAlignment = arrStandard(2, y)
-                            .Cells(i, 2).Interior.Color = arrStandard(3, y)
-                            .Cells(i, 2).Font.Bold = arrStandard(4, y)
-                            .Cells(i, 2).Font.Italic = arrStandard(5, y)
-
-                            .Cells(i, 8).Value = arrStandard(6, y)
-                            .Cells(i, 8).HorizontalAlignment = arrStandard(7, y)
-                            .Cells(i, 8).Interior.Color = arrStandard(8, y)
-                            .Cells(i, 8).Font.Bold = arrStandard(9, y)
-                            .Cells(i, 8).Font.Italic = arrStandard(10, y)
-
-                            .Cells(i, 10).Value = arrStandard(11, y)
-                            .Cells(i, 10).HorizontalAlignment = arrStandard(12, y)
-                            .Cells(i, 10).Interior.Color = arrStandard(13, y)
-                            .Cells(i, 10).Font.Bold = arrStandard(14, y)
-                            .Cells(i, 10).Font.Italic = arrStandard(15, y)
-                        End With
-
-                        failedFind = False
-                    End If
-                Next
-
-
-                Dim testDuration As TimeSpan = Now() - testStartTime
-                txtTotalTime = txtTotalTime + testDuration
-                avgTxtTime = txtTotalTime.TotalSeconds / rollTxtCnt
-
-                If failedFind = True Then
-                    OptimizeCode_End()
-                    If MsgBox("Falied to file standard with key " & currentKey, vbOKCancel, "Error") = vbCancel Then
-                        Exit Sub
-                    End If
-                    OptimizeCode_Begin()
-                End If
-
+                plyCount += 1
+            ElseIf currentKey = "BULK" Then
+                plyCount = 0
             End If
 
         Next
