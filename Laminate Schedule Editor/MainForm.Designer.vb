@@ -40,13 +40,13 @@ Partial Class MainForm
         Me.TableLayoutPanel4 = New System.Windows.Forms.TableLayoutPanel()
         Me.TableLayoutPanel5 = New System.Windows.Forms.TableLayoutPanel()
         Me.Btn_buildUpRoll = New System.Windows.Forms.Button()
-        Me.StatusStrip1 = New System.Windows.Forms.StatusStrip()
-        Me.ToolStripStatusLabel1 = New System.Windows.Forms.ToolStripStatusLabel()
         Me.TableLayoutPanel6 = New System.Windows.Forms.TableLayoutPanel()
         Me.GroupBox4 = New System.Windows.Forms.GroupBox()
         Me.TableLayoutPanel7 = New System.Windows.Forms.TableLayoutPanel()
-        Me.Txt_ExcelStartRow = New System.Windows.Forms.TextBox()
         Me.Txt_ExcelEndRow = New System.Windows.Forms.TextBox()
+        Me.Txt_ExcelStartRow = New System.Windows.Forms.TextBox()
+        Me.StatusStrip1 = New System.Windows.Forms.StatusStrip()
+        Me.ToolStripStatusLabel1 = New System.Windows.Forms.ToolStripStatusLabel()
         Me.GroupBox1.SuspendLayout()
         Me.GroupBox2.SuspendLayout()
         Me.TableLayoutPanel1.SuspendLayout()
@@ -55,10 +55,10 @@ Partial Class MainForm
         Me.GroupBox3.SuspendLayout()
         Me.TableLayoutPanel4.SuspendLayout()
         Me.TableLayoutPanel5.SuspendLayout()
-        Me.StatusStrip1.SuspendLayout()
         Me.TableLayoutPanel6.SuspendLayout()
         Me.GroupBox4.SuspendLayout()
         Me.TableLayoutPanel7.SuspendLayout()
+        Me.StatusStrip1.SuspendLayout()
         Me.SuspendLayout()
         '
         'FilePath
@@ -255,21 +255,6 @@ Partial Class MainForm
         Me.Btn_buildUpRoll.Text = "Build-up Roll"
         Me.Btn_buildUpRoll.UseVisualStyleBackColor = True
         '
-        'StatusStrip1
-        '
-        Me.StatusStrip1.Items.AddRange(New System.Windows.Forms.ToolStripItem() {Me.ToolStripStatusLabel1})
-        Me.StatusStrip1.Location = New System.Drawing.Point(0, 220)
-        Me.StatusStrip1.Name = "StatusStrip1"
-        Me.StatusStrip1.Size = New System.Drawing.Size(671, 22)
-        Me.StatusStrip1.TabIndex = 10
-        Me.StatusStrip1.Text = "StatusStrip1"
-        '
-        'ToolStripStatusLabel1
-        '
-        Me.ToolStripStatusLabel1.Name = "ToolStripStatusLabel1"
-        Me.ToolStripStatusLabel1.Size = New System.Drawing.Size(48, 17)
-        Me.ToolStripStatusLabel1.Text = "Status..."
-        '
         'TableLayoutPanel6
         '
         Me.TableLayoutPanel6.ColumnCount = 1
@@ -310,6 +295,16 @@ Partial Class MainForm
         Me.TableLayoutPanel7.Size = New System.Drawing.Size(175, 25)
         Me.TableLayoutPanel7.TabIndex = 0
         '
+        'Txt_ExcelEndRow
+        '
+        Me.Txt_ExcelEndRow.Dock = System.Windows.Forms.DockStyle.Fill
+        Me.Txt_ExcelEndRow.Location = New System.Drawing.Point(90, 3)
+        Me.Txt_ExcelEndRow.Name = "Txt_ExcelEndRow"
+        Me.Txt_ExcelEndRow.Size = New System.Drawing.Size(82, 20)
+        Me.Txt_ExcelEndRow.TabIndex = 1
+        Me.Txt_ExcelEndRow.Text = "0"
+        Me.Txt_ExcelEndRow.TextAlign = System.Windows.Forms.HorizontalAlignment.Center
+        '
         'Txt_ExcelStartRow
         '
         Me.Txt_ExcelStartRow.Dock = System.Windows.Forms.DockStyle.Fill
@@ -320,15 +315,20 @@ Partial Class MainForm
         Me.Txt_ExcelStartRow.Text = "0"
         Me.Txt_ExcelStartRow.TextAlign = System.Windows.Forms.HorizontalAlignment.Center
         '
-        'Txt_ExcelEndRow
+        'StatusStrip1
         '
-        Me.Txt_ExcelEndRow.Dock = System.Windows.Forms.DockStyle.Fill
-        Me.Txt_ExcelEndRow.Location = New System.Drawing.Point(90, 3)
-        Me.Txt_ExcelEndRow.Name = "Txt_ExcelEndRow"
-        Me.Txt_ExcelEndRow.Size = New System.Drawing.Size(82, 20)
-        Me.Txt_ExcelEndRow.TabIndex = 1
-        Me.Txt_ExcelEndRow.Text = "0"
-        Me.Txt_ExcelEndRow.TextAlign = System.Windows.Forms.HorizontalAlignment.Center
+        Me.StatusStrip1.Items.AddRange(New System.Windows.Forms.ToolStripItem() {Me.ToolStripStatusLabel1})
+        Me.StatusStrip1.Location = New System.Drawing.Point(0, 220)
+        Me.StatusStrip1.Name = "StatusStrip1"
+        Me.StatusStrip1.Size = New System.Drawing.Size(671, 22)
+        Me.StatusStrip1.TabIndex = 10
+        Me.StatusStrip1.Text = "StatusStrip1"
+        '
+        'ToolStripStatusLabel1
+        '
+        Me.ToolStripStatusLabel1.Name = "ToolStripStatusLabel1"
+        Me.ToolStripStatusLabel1.Size = New System.Drawing.Size(48, 17)
+        Me.ToolStripStatusLabel1.Text = "Status..."
         '
         'MainForm
         '
@@ -350,12 +350,12 @@ Partial Class MainForm
         Me.GroupBox3.ResumeLayout(False)
         Me.TableLayoutPanel4.ResumeLayout(False)
         Me.TableLayoutPanel5.ResumeLayout(False)
-        Me.StatusStrip1.ResumeLayout(False)
-        Me.StatusStrip1.PerformLayout()
         Me.TableLayoutPanel6.ResumeLayout(False)
         Me.GroupBox4.ResumeLayout(False)
         Me.TableLayoutPanel7.ResumeLayout(False)
         Me.TableLayoutPanel7.PerformLayout()
+        Me.StatusStrip1.ResumeLayout(False)
+        Me.StatusStrip1.PerformLayout()
         Me.ResumeLayout(False)
         Me.PerformLayout()
 

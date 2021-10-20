@@ -191,7 +191,7 @@ Public Class MainForm
                     currentLine = currentLine + 1
                     xlWorkBook.ActiveSheet.Cells(currentLine, 1).Value = "SECONDARY"
                     currentLine = currentLine + 1
-                    xlWorkBook.ActiveSheet.Cells(currentLine, 1).Value = "BLANK"
+                    xlWorkBook.ActiveSheet.Cells(currentLine, 1).Value = "SECONDARY2"
                     currentLine = currentLine + 1
                     xlWorkBook.ActiveSheet.Cells(currentLine, 1).Value = "PLYHEAD"
                     currentLine = currentLine + 1
@@ -207,7 +207,7 @@ Public Class MainForm
                 currentLine = currentLine + 1
                 xlWorkBook.ActiveSheet.Cells(currentLine, 1).Value = "SECONDARY"
                 currentLine = currentLine + 1
-                xlWorkBook.ActiveSheet.Cells(currentLine, 1).Value = "BLANK"
+                xlWorkBook.ActiveSheet.Cells(currentLine, 1).Value = "SECONDARY2"
                 currentLine = currentLine + 1
                 xlWorkBook.ActiveSheet.Cells(currentLine, 1).Value = "PLYHEAD"
                 currentLine = currentLine + 1
