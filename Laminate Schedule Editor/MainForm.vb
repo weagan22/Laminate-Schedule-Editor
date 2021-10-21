@@ -457,7 +457,7 @@ Public Class MainForm
 
                             With xlWorkBook.ActiveSheet
 
-                                If currentKey = "BULK" Or currentKey = "TC" Then
+                                If currentKey = "BULK" Or currentKey = "TC" And plyCount > 0 Then
                                     .Cells(i, 2).Value = arrStandard(1, y) & " || PLY COUNT: " & plyCount
                                     plyCount = 0
                                 Else
