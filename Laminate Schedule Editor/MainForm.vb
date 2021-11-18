@@ -503,7 +503,7 @@ Public Class MainForm
 
             ElseIf IsNumeric(currentKey) Then
                 plyCount += 1
-            ElseIf currentKey = "BULK" Then
+            ElseIf instr(currentKey, "BULK", CompareMethod.Text) > 0 Then
                 plyCount = 0
             End If
 
