@@ -1,7 +1,7 @@
 ﻿Imports Excel = Microsoft.Office.Interop.Excel
 
 Public Class MainForm
-    Dim xlWorkBook As Excel.Workbook
+    Dim xlWorkBook As Object
     Dim Excel As Object = Nothing
 
     Public CalcState As Long
