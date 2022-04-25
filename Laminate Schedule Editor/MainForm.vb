@@ -627,4 +627,66 @@ Public Class MainForm
     Private Sub Btn_buildUpRoll_Click(sender As Object, e As EventArgs) Handles Btn_buildUpRoll.Click
         Call buildUpRoll()
     End Sub
+
+    Sub PlyHeaderNewSht()
+        xlWorkBook.Worksheets.Item(1).Activate
+
+        'Find where the key line is to find the start
+        Dim i As Integer
+        i = 1
+        Dim keyLine As Integer
+        Do
+            If CStr(xlWorkBook.ActiveSheet.Cells(i, 1).Value) = "KEY" Then
+                keyLine = i
+            End If
+            i = i + 1
+        Loop Until keyLine > 0
+
+
+        'Find where the values end
+        Dim loopValue As Integer = i
+        Do Until CStr(xlWorkBook.ActiveSheet.Cells(loopValue, 1).Value) = ""
+            loopValue = loopValue + 1
+        Loop
+        loopValue = loopValue - 1
+
+
+        'Get the key values from the sheet
+        Dim keyVals As List(Of String) = New List(Of String)
+
+        For i = keyLine To loopValue
+            keyVals.Add(xlWorkBook.ActiveSheet.Cells(i, 1).Value)
+        Next
+
+        'Remove any plyheads that were added previously
+        For i = keyVals.Count - 1 To 0 Step -1
+            If keyVals(i) = "PLYHEAD" Then
+                If IsNumeric(keyVals(i - 1)) And IsNumeric(keyVals(i + 1)) Then
+                    keyVals.RemoveAt(i)
+                End If
+            End If
+        Next
+
+        'Add plyheads at the top of each sheet
+        i = 0
+        Do While i < keyVals.Count
+            If (i - 35) Mod 37 = 0 Or i = 35 Then
+                If IsNumeric(keyVals(i - 1)) And IsNumeric(keyVals(i + 1)) Then
+                    keyVals.Insert(i + 1, "PLYHEAD")
+                End If
+            End If
+            i += 1
+        Loop
+
+        'Input values back into the sheet
+        For i = keyLine To keyLine + keyVals.Count - 1
+            xlWorkBook.ActiveSheet.Cells(i, 1).Value = keyVals(i - keyLine)
+        Next
+
+
+    End Sub
+
+    Private Sub Btn_ShtHeaders_Click(sender As Object, e As EventArgs) Handles Btn_ShtHeaders.Click
+        Call PlyHeaderNewSht()
+    End Sub
 End Class

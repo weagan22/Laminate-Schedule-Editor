@@ -43,12 +43,13 @@ Partial Class MainForm
         Me.TableLayoutPanel6 = New System.Windows.Forms.TableLayoutPanel()
         Me.GroupBox4 = New System.Windows.Forms.GroupBox()
         Me.TableLayoutPanel7 = New System.Windows.Forms.TableLayoutPanel()
-        Me.Txt_ExcelEndRow = New System.Windows.Forms.TextBox()
+        Me.GroupBox5 = New System.Windows.Forms.GroupBox()
         Me.Txt_ExcelStartRow = New System.Windows.Forms.TextBox()
+        Me.GroupBox6 = New System.Windows.Forms.GroupBox()
+        Me.Txt_ExcelEndRow = New System.Windows.Forms.TextBox()
         Me.StatusStrip1 = New System.Windows.Forms.StatusStrip()
         Me.ToolStripStatusLabel1 = New System.Windows.Forms.ToolStripStatusLabel()
-        Me.GroupBox5 = New System.Windows.Forms.GroupBox()
-        Me.GroupBox6 = New System.Windows.Forms.GroupBox()
+        Me.Btn_ShtHeaders = New System.Windows.Forms.Button()
         Me.GroupBox1.SuspendLayout()
         Me.GroupBox2.SuspendLayout()
         Me.TableLayoutPanel1.SuspendLayout()
@@ -60,9 +61,9 @@ Partial Class MainForm
         Me.TableLayoutPanel6.SuspendLayout()
         Me.GroupBox4.SuspendLayout()
         Me.TableLayoutPanel7.SuspendLayout()
-        Me.StatusStrip1.SuspendLayout()
         Me.GroupBox5.SuspendLayout()
         Me.GroupBox6.SuspendLayout()
+        Me.StatusStrip1.SuspendLayout()
         Me.SuspendLayout()
         '
         'FilePath
@@ -144,7 +145,7 @@ Partial Class MainForm
         Me.Btn_wrkUpdate.Dock = System.Windows.Forms.DockStyle.Fill
         Me.Btn_wrkUpdate.Location = New System.Drawing.Point(3, 3)
         Me.Btn_wrkUpdate.Name = "Btn_wrkUpdate"
-        Me.Btn_wrkUpdate.Size = New System.Drawing.Size(157, 62)
+        Me.Btn_wrkUpdate.Size = New System.Drawing.Size(157, 39)
         Me.Btn_wrkUpdate.TabIndex = 7
         Me.Btn_wrkUpdate.Text = "Header/Footer Update"
         Me.Btn_wrkUpdate.UseVisualStyleBackColor = True
@@ -238,23 +239,26 @@ Partial Class MainForm
         'TableLayoutPanel5
         '
         Me.TableLayoutPanel5.ColumnCount = 1
-        Me.TableLayoutPanel5.ColumnStyles.Add(New System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 50.0!))
+        Me.TableLayoutPanel5.ColumnStyles.Add(New System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 100.0!))
         Me.TableLayoutPanel5.Controls.Add(Me.Btn_wrkUpdate, 0, 0)
         Me.TableLayoutPanel5.Controls.Add(Me.Btn_buildUpRoll, 0, 1)
+        Me.TableLayoutPanel5.Controls.Add(Me.Btn_ShtHeaders, 0, 2)
         Me.TableLayoutPanel5.Dock = System.Windows.Forms.DockStyle.Fill
         Me.TableLayoutPanel5.Location = New System.Drawing.Point(503, 3)
         Me.TableLayoutPanel5.Name = "TableLayoutPanel5"
-        Me.TableLayoutPanel5.RowCount = 2
-        Me.TableLayoutPanel5.RowStyles.Add(New System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 50.0!))
-        Me.TableLayoutPanel5.RowStyles.Add(New System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 50.0!))
+        Me.TableLayoutPanel5.RowCount = 3
+        Me.TableLayoutPanel5.RowStyles.Add(New System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 33.33333!))
+        Me.TableLayoutPanel5.RowStyles.Add(New System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 33.33333!))
+        Me.TableLayoutPanel5.RowStyles.Add(New System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 33.33333!))
         Me.TableLayoutPanel5.Size = New System.Drawing.Size(163, 137)
         Me.TableLayoutPanel5.TabIndex = 5
         '
         'Btn_buildUpRoll
         '
-        Me.Btn_buildUpRoll.Location = New System.Drawing.Point(3, 71)
+        Me.Btn_buildUpRoll.Dock = System.Windows.Forms.DockStyle.Fill
+        Me.Btn_buildUpRoll.Location = New System.Drawing.Point(3, 48)
         Me.Btn_buildUpRoll.Name = "Btn_buildUpRoll"
-        Me.Btn_buildUpRoll.Size = New System.Drawing.Size(152, 41)
+        Me.Btn_buildUpRoll.Size = New System.Drawing.Size(157, 39)
         Me.Btn_buildUpRoll.TabIndex = 8
         Me.Btn_buildUpRoll.Text = "Build-up Roll"
         Me.Btn_buildUpRoll.UseVisualStyleBackColor = True
@@ -300,15 +304,15 @@ Partial Class MainForm
         Me.TableLayoutPanel7.Size = New System.Drawing.Size(176, 44)
         Me.TableLayoutPanel7.TabIndex = 0
         '
-        'Txt_ExcelEndRow
+        'GroupBox5
         '
-        Me.Txt_ExcelEndRow.Dock = System.Windows.Forms.DockStyle.Fill
-        Me.Txt_ExcelEndRow.Location = New System.Drawing.Point(3, 16)
-        Me.Txt_ExcelEndRow.Name = "Txt_ExcelEndRow"
-        Me.Txt_ExcelEndRow.Size = New System.Drawing.Size(76, 20)
-        Me.Txt_ExcelEndRow.TabIndex = 1
-        Me.Txt_ExcelEndRow.Text = "0"
-        Me.Txt_ExcelEndRow.TextAlign = System.Windows.Forms.HorizontalAlignment.Center
+        Me.GroupBox5.Controls.Add(Me.Txt_ExcelStartRow)
+        Me.GroupBox5.Location = New System.Drawing.Point(3, 3)
+        Me.GroupBox5.Name = "GroupBox5"
+        Me.GroupBox5.Size = New System.Drawing.Size(82, 38)
+        Me.GroupBox5.TabIndex = 0
+        Me.GroupBox5.TabStop = False
+        Me.GroupBox5.Text = "Start"
         '
         'Txt_ExcelStartRow
         '
@@ -319,6 +323,26 @@ Partial Class MainForm
         Me.Txt_ExcelStartRow.TabIndex = 0
         Me.Txt_ExcelStartRow.Text = "0"
         Me.Txt_ExcelStartRow.TextAlign = System.Windows.Forms.HorizontalAlignment.Center
+        '
+        'GroupBox6
+        '
+        Me.GroupBox6.Controls.Add(Me.Txt_ExcelEndRow)
+        Me.GroupBox6.Location = New System.Drawing.Point(91, 3)
+        Me.GroupBox6.Name = "GroupBox6"
+        Me.GroupBox6.Size = New System.Drawing.Size(82, 38)
+        Me.GroupBox6.TabIndex = 3
+        Me.GroupBox6.TabStop = False
+        Me.GroupBox6.Text = "End"
+        '
+        'Txt_ExcelEndRow
+        '
+        Me.Txt_ExcelEndRow.Dock = System.Windows.Forms.DockStyle.Fill
+        Me.Txt_ExcelEndRow.Location = New System.Drawing.Point(3, 16)
+        Me.Txt_ExcelEndRow.Name = "Txt_ExcelEndRow"
+        Me.Txt_ExcelEndRow.Size = New System.Drawing.Size(76, 20)
+        Me.Txt_ExcelEndRow.TabIndex = 1
+        Me.Txt_ExcelEndRow.Text = "0"
+        Me.Txt_ExcelEndRow.TextAlign = System.Windows.Forms.HorizontalAlignment.Center
         '
         'StatusStrip1
         '
@@ -335,25 +359,15 @@ Partial Class MainForm
         Me.ToolStripStatusLabel1.Size = New System.Drawing.Size(48, 17)
         Me.ToolStripStatusLabel1.Text = "Status..."
         '
-        'GroupBox5
+        'Btn_ShtHeaders
         '
-        Me.GroupBox5.Controls.Add(Me.Txt_ExcelStartRow)
-        Me.GroupBox5.Location = New System.Drawing.Point(3, 3)
-        Me.GroupBox5.Name = "GroupBox5"
-        Me.GroupBox5.Size = New System.Drawing.Size(82, 38)
-        Me.GroupBox5.TabIndex = 0
-        Me.GroupBox5.TabStop = False
-        Me.GroupBox5.Text = "Start"
-        '
-        'GroupBox6
-        '
-        Me.GroupBox6.Controls.Add(Me.Txt_ExcelEndRow)
-        Me.GroupBox6.Location = New System.Drawing.Point(91, 3)
-        Me.GroupBox6.Name = "GroupBox6"
-        Me.GroupBox6.Size = New System.Drawing.Size(82, 38)
-        Me.GroupBox6.TabIndex = 3
-        Me.GroupBox6.TabStop = False
-        Me.GroupBox6.Text = "End"
+        Me.Btn_ShtHeaders.Dock = System.Windows.Forms.DockStyle.Fill
+        Me.Btn_ShtHeaders.Location = New System.Drawing.Point(3, 93)
+        Me.Btn_ShtHeaders.Name = "Btn_ShtHeaders"
+        Me.Btn_ShtHeaders.Size = New System.Drawing.Size(157, 41)
+        Me.Btn_ShtHeaders.TabIndex = 3
+        Me.Btn_ShtHeaders.Text = "Sheet Headers"
+        Me.Btn_ShtHeaders.UseVisualStyleBackColor = True
         '
         'MainForm
         '
@@ -378,12 +392,12 @@ Partial Class MainForm
         Me.TableLayoutPanel6.ResumeLayout(False)
         Me.GroupBox4.ResumeLayout(False)
         Me.TableLayoutPanel7.ResumeLayout(False)
-        Me.StatusStrip1.ResumeLayout(False)
-        Me.StatusStrip1.PerformLayout()
         Me.GroupBox5.ResumeLayout(False)
         Me.GroupBox5.PerformLayout()
         Me.GroupBox6.ResumeLayout(False)
         Me.GroupBox6.PerformLayout()
+        Me.StatusStrip1.ResumeLayout(False)
+        Me.StatusStrip1.PerformLayout()
         Me.ResumeLayout(False)
         Me.PerformLayout()
 
@@ -415,4 +429,5 @@ Partial Class MainForm
     Friend WithEvents Txt_ExcelStartRow As TextBox
     Friend WithEvents GroupBox5 As GroupBox
     Friend WithEvents GroupBox6 As GroupBox
+    Friend WithEvents Btn_ShtHeaders As Button
 End Class
