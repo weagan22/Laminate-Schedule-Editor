@@ -670,9 +670,9 @@ Public Class MainForm
         'Add plyheads at the top of each sheet
         i = 0
         Do While i < keyVals.Count
-            If (i - 35) Mod 37 = 0 Or i = 35 Then
+            If (i - 36) Mod 37 = 0 Then 'Or i = 35 Then
                 If IsNumeric(keyVals(i - 1)) And IsNumeric(keyVals(i + 1)) Then
-                    keyVals.Insert(i + 1, "PLYHEAD")
+                    keyVals.Insert(i, "PLYHEAD")
                 End If
             End If
             i += 1
@@ -680,6 +680,7 @@ Public Class MainForm
 
         'Input values back into the sheet
         For i = keyLine To keyLine + keyVals.Count - 1
+            xlWorkBook.ActiveSheet.Cells(i, 1).RowHeight = 36
             xlWorkBook.ActiveSheet.Cells(i, 1).Value = keyVals(i - keyLine)
         Next
 

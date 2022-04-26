@@ -40,6 +40,7 @@ Partial Class MainForm
         Me.TableLayoutPanel4 = New System.Windows.Forms.TableLayoutPanel()
         Me.TableLayoutPanel5 = New System.Windows.Forms.TableLayoutPanel()
         Me.Btn_buildUpRoll = New System.Windows.Forms.Button()
+        Me.Btn_ShtHeaders = New System.Windows.Forms.Button()
         Me.TableLayoutPanel6 = New System.Windows.Forms.TableLayoutPanel()
         Me.GroupBox4 = New System.Windows.Forms.GroupBox()
         Me.TableLayoutPanel7 = New System.Windows.Forms.TableLayoutPanel()
@@ -49,7 +50,6 @@ Partial Class MainForm
         Me.Txt_ExcelEndRow = New System.Windows.Forms.TextBox()
         Me.StatusStrip1 = New System.Windows.Forms.StatusStrip()
         Me.ToolStripStatusLabel1 = New System.Windows.Forms.ToolStripStatusLabel()
-        Me.Btn_ShtHeaders = New System.Windows.Forms.Button()
         Me.GroupBox1.SuspendLayout()
         Me.GroupBox2.SuspendLayout()
         Me.TableLayoutPanel1.SuspendLayout()
@@ -263,6 +263,16 @@ Partial Class MainForm
         Me.Btn_buildUpRoll.Text = "Build-up Roll"
         Me.Btn_buildUpRoll.UseVisualStyleBackColor = True
         '
+        'Btn_ShtHeaders
+        '
+        Me.Btn_ShtHeaders.Dock = System.Windows.Forms.DockStyle.Fill
+        Me.Btn_ShtHeaders.Location = New System.Drawing.Point(3, 93)
+        Me.Btn_ShtHeaders.Name = "Btn_ShtHeaders"
+        Me.Btn_ShtHeaders.Size = New System.Drawing.Size(157, 41)
+        Me.Btn_ShtHeaders.TabIndex = 3
+        Me.Btn_ShtHeaders.Text = "PLYHEAD Per Sheet"
+        Me.Btn_ShtHeaders.UseVisualStyleBackColor = True
+        '
         'TableLayoutPanel6
         '
         Me.TableLayoutPanel6.ColumnCount = 1
@@ -358,16 +368,6 @@ Partial Class MainForm
         Me.ToolStripStatusLabel1.Name = "ToolStripStatusLabel1"
         Me.ToolStripStatusLabel1.Size = New System.Drawing.Size(48, 17)
         Me.ToolStripStatusLabel1.Text = "Status..."
-        '
-        'Btn_ShtHeaders
-        '
-        Me.Btn_ShtHeaders.Dock = System.Windows.Forms.DockStyle.Fill
-        Me.Btn_ShtHeaders.Location = New System.Drawing.Point(3, 93)
-        Me.Btn_ShtHeaders.Name = "Btn_ShtHeaders"
-        Me.Btn_ShtHeaders.Size = New System.Drawing.Size(157, 41)
-        Me.Btn_ShtHeaders.TabIndex = 3
-        Me.Btn_ShtHeaders.Text = "Sheet Headers"
-        Me.Btn_ShtHeaders.UseVisualStyleBackColor = True
         '
         'MainForm
         '
