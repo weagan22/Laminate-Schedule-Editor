@@ -1,4 +1,5 @@
-﻿Imports Excel = Microsoft.Office.Interop.Excel
+﻿Imports System.Text.RegularExpressions
+Imports Excel = Microsoft.Office.Interop.Excel
 
 Public Class MainForm
     Dim xlWorkBook As Object
@@ -394,7 +395,6 @@ Public Class MainForm
                     End With
 
                 ElseIf IsNumeric(currentKey) Then
-                    plyCount += 1
 
                     rollNumCnt = rollNumCnt + 1
 
@@ -411,6 +411,14 @@ Public Class MainForm
                     Dim z As Integer
                     For z = 1 To UBound(arrPlies, 2)
                         If CStr(arrPlies(0, z)) = CStr(currentKey) Then
+
+                            Dim multiPlyFormat As Regex = New Regex("(\d+) PCS")
+                            If multiPlyFormat.IsMatch(arrPlies(1, z)) Then
+                                plyCount += CInt(multiPlyFormat.Match(arrPlies(1, z)).Groups.Item(1).Value)
+                            Else
+                                plyCount += 1
+                            End If
+
                             xlWorkBook.ActiveSheet.Cells(i, 2).Value = arrPlies(1, z)
                             xlWorkBook.ActiveSheet.Cells(i, 3).Value = arrPlies(2, z)
                             xlWorkBook.ActiveSheet.Cells(i, 5).Value = arrPlies(3, z)
@@ -426,7 +434,7 @@ Public Class MainForm
 
                     If failedFind = True Then
                         OptimizeCode_End()
-                        If MsgBox("Falied to file ply with key " & currentKey, vbOKCancel, "Error") = vbCancel Then
+                        If MsgBox("Failed to file ply with key " & currentKey, vbOKCancel, "Error") = vbCancel Then
                             Exit Sub
                         End If
                         OptimizeCode_Begin()
@@ -457,7 +465,7 @@ Public Class MainForm
 
                             With xlWorkBook.ActiveSheet
 
-                                If InStr(currentKey, "BULK", CompareMethod.Text) > 0 Or currentKey = "TC" And plyCount > 0 Then
+                                If currentKey.Contains("BULK") Or currentKey = "TC" And plyCount > 0 Then
                                     .Cells(i, 2).Value = arrStandard(1, y) & " || PLY COUNT: " & plyCount
                                     plyCount = 0
                                 Else
@@ -493,7 +501,7 @@ Public Class MainForm
 
                     If failedFind = True Then
                         OptimizeCode_End()
-                        If MsgBox("Falied to file standard with key " & currentKey, vbOKCancel, "Error") = vbCancel Then
+                        If MsgBox("Failed to file standard with key " & currentKey, vbOKCancel, "Error") = vbCancel Then
                             Exit Sub
                         End If
                         OptimizeCode_Begin()
@@ -502,8 +510,14 @@ Public Class MainForm
                 End If
 
             ElseIf IsNumeric(currentKey) Then
-                plyCount += 1
-            ElseIf instr(currentKey, "BULK", CompareMethod.Text) > 0 Then
+                Dim multiPlyFormat As Regex = New Regex("(\d+) PCS")
+                If multiPlyFormat.IsMatch(xlWorkBook.ActiveSheet.Cells(i, 2).Value) Then
+                    plyCount += CInt(multiPlyFormat.Match(xlWorkBook.ActiveSheet.Cells(i, 2).Value).Groups.Item(1).Value)
+                Else
+                    plyCount += 1
+                End If
+
+            ElseIf currentKey.Contains("BULK") Then
                 plyCount = 0
             End If
 

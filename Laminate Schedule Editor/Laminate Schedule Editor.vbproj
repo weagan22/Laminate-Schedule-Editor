@@ -47,7 +47,7 @@
     <OptionInfer>On</OptionInfer>
   </PropertyGroup>
   <PropertyGroup>
-    <ApplicationIcon>systima___no_bkgrnd_5CL_icon.ico</ApplicationIcon>
+    <ApplicationIcon>Check2.ico</ApplicationIcon>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="System" />
@@ -151,6 +151,8 @@
     </COMReference>
   </ItemGroup>
   <ItemGroup>
+    <Content Include="Check.ico" />
+    <Content Include="Check2.ico" />
     <Content Include="systima___no_bkgrnd_5CL_icon.ico" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.VisualBasic.targets" />
