@@ -175,7 +175,7 @@ Public Class MainForm
         Dim plyBookNum As Integer
         plyBookNum = 1
         Dim firstDebulk As Boolean
-        firstDebulk = False
+        firstDebulk = Not Chk_FirstPlyDebulk.Checked
 
         Dim sequenceName As String = xlWorkBook.Sheets.Item(2).Cells(plyBookNum, 2).Value
 
@@ -186,32 +186,15 @@ Public Class MainForm
                 sequenceName = xlWorkBook.Sheets.Item(2).Cells(plyBookNum, 2).Value
 
                 If firstDebulk = False And debulkRate = 2 Then
-                    xlWorkBook.ActiveSheet.Cells(currentLine, 1).Value = "TECH"
-                    currentLine = currentLine + 1
-                    xlWorkBook.ActiveSheet.Cells(currentLine, 1).Value = "BULK"
-                    currentLine = currentLine + 1
-                    xlWorkBook.ActiveSheet.Cells(currentLine, 1).Value = "SECONDARY"
-                    currentLine = currentLine + 1
-                    xlWorkBook.ActiveSheet.Cells(currentLine, 1).Value = "SECONDARY2"
-                    currentLine = currentLine + 1
-                    xlWorkBook.ActiveSheet.Cells(currentLine, 1).Value = "PLYHEAD"
-                    currentLine = currentLine + 1
+                    AddDebulk(currentLine)
+
                     firstDebulk = True
                     debulkRate = debulkRate - 1
                 End If
             End If
 
             If debulkRate = debulkConst + 1 Then
-                xlWorkBook.ActiveSheet.Cells(currentLine, 1).Value = "TECH"
-                currentLine = currentLine + 1
-                xlWorkBook.ActiveSheet.Cells(currentLine, 1).Value = "BULK"
-                currentLine = currentLine + 1
-                xlWorkBook.ActiveSheet.Cells(currentLine, 1).Value = "SECONDARY"
-                currentLine = currentLine + 1
-                xlWorkBook.ActiveSheet.Cells(currentLine, 1).Value = "SECONDARY2"
-                currentLine = currentLine + 1
-                xlWorkBook.ActiveSheet.Cells(currentLine, 1).Value = "PLYHEAD"
-                currentLine = currentLine + 1
+                AddDebulk(currentLine)
                 debulkRate = 1
             End If
 
@@ -245,6 +228,19 @@ Public Class MainForm
         currentLine = currentLine + 1
 
 
+    End Sub
+
+    Sub AddDebulk(ByRef currentLine As Integer)
+        xlWorkBook.ActiveSheet.Cells(currentLine, 1).Value = "TECH"
+        currentLine = currentLine + 1
+        xlWorkBook.ActiveSheet.Cells(currentLine, 1).Value = "BULK"
+        currentLine = currentLine + 1
+        xlWorkBook.ActiveSheet.Cells(currentLine, 1).Value = "SECONDARY"
+        currentLine = currentLine + 1
+        xlWorkBook.ActiveSheet.Cells(currentLine, 1).Value = "SECONDARY2"
+        currentLine = currentLine + 1
+        xlWorkBook.ActiveSheet.Cells(currentLine, 1).Value = "PLYHEAD"
+        currentLine = currentLine + 1
     End Sub
 
     Sub addValues()
