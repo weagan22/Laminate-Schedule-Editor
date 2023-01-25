@@ -225,6 +225,7 @@ Partial Class MainForm
         Me.GroupBox3.Size = New System.Drawing.Size(300, 137)
         Me.GroupBox3.TabIndex = 3
         Me.GroupBox3.TabStop = False
+        Me.GroupBox3.Text = "Create Col A Keys"
         '
         'TableLayoutPanel4
         '

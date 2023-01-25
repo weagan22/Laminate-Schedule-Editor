@@ -148,34 +148,18 @@ Public Class MainForm
     Sub plyStandardCreate()
 
         xlWorkBook.Worksheets.Item(1).Activate
-        Dim debulkConst As Integer
-        debulkConst = CInt(Txt_DebulkConst.Text)
+        Dim debulkConst As Integer = CInt(Txt_DebulkConst.Text)
 
-        Dim i As Integer
-        i = 1
-        Dim keyLine As Integer
-        Do
-            If CStr(xlWorkBook.ActiveSheet.Cells(i, 1).Value) = "KEY" Then
-                keyLine = i
-            End If
-            i = i + 1
-        Loop Until keyLine > 0
+        Dim currentLine As Integer = FindKey() + 1
 
-        xlWorkBook.ActiveSheet.Range("A" & i & ":A9999").Clear
+        xlWorkBook.ActiveSheet.Range("A" & currentLine & ":A9999").Clear
 
-        Dim currentLine As Integer
-        currentLine = keyLine + 1
-        xlWorkBook.ActiveSheet.Cells(currentLine, 1).Value = "PREP"
-        currentLine = currentLine + 1
-        xlWorkBook.ActiveSheet.Cells(currentLine, 1).Value = "PLYHEAD"
-        currentLine = currentLine + 1
+        WriteLine("PREP", currentLine)
+        WriteLine("PLYHEAD", currentLine)
 
-        Dim debulkRate As Integer
-        debulkRate = 0
-        Dim plyBookNum As Integer
-        plyBookNum = 1
-        Dim firstDebulk As Boolean
-        firstDebulk = Not Chk_FirstPlyDebulk.Checked
+        Dim debulkRate As Integer = 0
+        Dim plyBookNum As Integer = 1
+        Dim firstDebulk As Boolean = Not Chk_FirstPlyDebulk.Checked
 
         Dim sequenceName As String = xlWorkBook.Sheets.Item(2).Cells(plyBookNum, 2).Value
 
@@ -204,42 +188,46 @@ Public Class MainForm
         Loop Until CStr(xlWorkBook.Sheets.Item(2).Cells(plyBookNum, 1).Value) = ""
 
         currentLine = currentLine - 1
-        xlWorkBook.ActiveSheet.Cells(currentLine, 1).Value = "TC"
-        currentLine = currentLine + 1
-        xlWorkBook.ActiveSheet.Cells(currentLine, 1).Value = "FB"
-        currentLine = currentLine + 1
-        xlWorkBook.ActiveSheet.Cells(currentLine, 1).Value = "LEAK"
-        currentLine = currentLine + 1
-        xlWorkBook.ActiveSheet.Cells(currentLine, 1).Value = "BLANK"
-        currentLine = currentLine + 1
-        xlWorkBook.ActiveSheet.Cells(currentLine, 1).Value = "LEAK-END"
-        currentLine = currentLine + 1
-        xlWorkBook.ActiveSheet.Cells(currentLine, 1).Value = "BLANK"
-        currentLine = currentLine + 1
-        xlWorkBook.ActiveSheet.Cells(currentLine, 1).Value = "LABEL"
-        currentLine = currentLine + 1
-        xlWorkBook.ActiveSheet.Cells(currentLine, 1).Value = "SECONDARY"
-        currentLine = currentLine + 1
-        xlWorkBook.ActiveSheet.Cells(currentLine, 1).Value = "BLANK"
-        currentLine = currentLine + 1
-        xlWorkBook.ActiveSheet.Cells(currentLine, 1).Value = "QUALITY"
-        currentLine = currentLine + 1
-        xlWorkBook.ActiveSheet.Cells(currentLine, 1).Value = "BLANK"
-        currentLine = currentLine + 1
+
+        WriteLine("TC", currentLine)
+        WriteLine("FB", currentLine)
+        WriteLine("LEAK", currentLine)
+        WriteLine("BLANK", currentLine)
+        WriteLine("LEAK-END", currentLine)
+        WriteLine("BLANK", currentLine)
+        WriteLine("LABEL", currentLine)
+        WriteLine("SECONDARY", currentLine)
+        WriteLine("BLANK", currentLine)
+        WriteLine("QUALITY", currentLine)
+        WriteLine("BLANK", currentLine)
 
 
     End Sub
 
+    Function FindKey() As Integer
+
+        Dim retKey As Integer = 0
+
+        For i = 1 To xlWorkBook.ActiveSheet.UsedRange.Rows.Count
+            If CStr(xlWorkBook.ActiveSheet.Cells(i, 1).Value) = "KEY" Then
+                retKey = i
+                Exit For
+            End If
+        Next
+
+        Return retKey
+    End Function
+
     Sub AddDebulk(ByRef currentLine As Integer)
-        xlWorkBook.ActiveSheet.Cells(currentLine, 1).Value = "TECH"
-        currentLine = currentLine + 1
-        xlWorkBook.ActiveSheet.Cells(currentLine, 1).Value = "BULK"
-        currentLine = currentLine + 1
-        xlWorkBook.ActiveSheet.Cells(currentLine, 1).Value = "SECONDARY"
-        currentLine = currentLine + 1
-        xlWorkBook.ActiveSheet.Cells(currentLine, 1).Value = "SECONDARY2"
-        currentLine = currentLine + 1
-        xlWorkBook.ActiveSheet.Cells(currentLine, 1).Value = "PLYHEAD"
+        WriteLine("TECH", currentLine)
+        WriteLine("BULK", currentLine)
+        WriteLine("SECONDARY", currentLine)
+        WriteLine("SECONDARY2", currentLine)
+        WriteLine("PLYHEAD", currentLine)
+    End Sub
+
+    Sub WriteLine(OutText As String, ByRef currentLine As Integer)
+        xlWorkBook.ActiveSheet.Cells(currentLine, 1).Value = OutText
         currentLine = currentLine + 1
     End Sub
 
@@ -297,23 +285,16 @@ Public Class MainForm
         Loop
 
         'Find where the key line is
-        Dim i As Integer
-        i = 1
-        Dim keyLine As Integer
-        Do
-            If xlWorkBook.ActiveSheet.Cells(i, 1).Value = "KEY" Then
-                keyLine = i
-            End If
-            i = i + 1
-        Loop Until keyLine > 0
+        Dim i As Integer = 1
+        Dim keyLine As Integer = FindKey()
 
 
         'Get the rows that the user would like to run
         Dim ExcelStartRow As Integer = CInt(Txt_ExcelStartRow.Text)
         Dim ExcelEndRow As Integer = CInt(Txt_ExcelEndRow.Text)
 
-        If ExcelStartRow < i - 1 Then ExcelStartRow = i - 1
-        If ExcelEndRow < i - 1 Then ExcelEndRow = 9999
+        If ExcelStartRow < keyLine Then ExcelStartRow = keyLine
+        If ExcelEndRow < keyLine Then ExcelEndRow = 9999
 
 
         'Unmerge the rows that the user would like to update
@@ -323,33 +304,33 @@ Public Class MainForm
 
 
         'Update the key row
-        xlWorkBook.ActiveSheet.Range("B" & i - 1 & ":G" & i - 1).Merge
-        xlWorkBook.ActiveSheet.Range("H" & i - 1 & ":I" & i - 1).Merge
-        xlWorkBook.ActiveSheet.Range("J" & i - 1 & ":L" & i - 1).Merge
+        xlWorkBook.ActiveSheet.Range("B" & keyLine & ":G" & keyLine).Merge
+        xlWorkBook.ActiveSheet.Range("H" & keyLine & ":I" & keyLine).Merge
+        xlWorkBook.ActiveSheet.Range("J" & keyLine & ":L" & keyLine).Merge
 
-        xlWorkBook.ActiveSheet.Cells(i - 1, 2).Interior.Color = RGB(242, 242, 242)
+        xlWorkBook.ActiveSheet.Cells(keyLine, 2).Interior.Color = RGB(242, 242, 242)
 
-        xlWorkBook.ActiveSheet.Cells(i - 1, 2).Value = "DESCRIPTION"
-        xlWorkBook.ActiveSheet.Cells(i - 1, 2).HorizontalAlignment = -4108
-        xlWorkBook.ActiveSheet.Cells(i - 1, 2).Interior.Color = RGB(242, 242, 242)
-        xlWorkBook.ActiveSheet.Cells(i - 1, 2).Font.Bold = True
+        xlWorkBook.ActiveSheet.Cells(keyLine, 2).Value = "DESCRIPTION"
+        xlWorkBook.ActiveSheet.Cells(keyLine, 2).HorizontalAlignment = -4108
+        xlWorkBook.ActiveSheet.Cells(keyLine, 2).Interior.Color = RGB(242, 242, 242)
+        xlWorkBook.ActiveSheet.Cells(keyLine, 2).Font.Bold = True
 
-        xlWorkBook.ActiveSheet.Cells(i - 1, 8).Value = "TECH. VERIFICATION"
-        xlWorkBook.ActiveSheet.Cells(i - 1, 8).HorizontalAlignment = -4108
-        xlWorkBook.ActiveSheet.Cells(i - 1, 8).Interior.Color = RGB(242, 242, 242)
-        xlWorkBook.ActiveSheet.Cells(i - 1, 8).Font.Bold = True
+        xlWorkBook.ActiveSheet.Cells(keyLine, 8).Value = "TECH. VERIFICATION"
+        xlWorkBook.ActiveSheet.Cells(keyLine, 8).HorizontalAlignment = -4108
+        xlWorkBook.ActiveSheet.Cells(keyLine, 8).Interior.Color = RGB(242, 242, 242)
+        xlWorkBook.ActiveSheet.Cells(keyLine, 8).Font.Bold = True
 
-        xlWorkBook.ActiveSheet.Cells(i - 1, 10).Value = "TIME & DATE"
-        xlWorkBook.ActiveSheet.Cells(i - 1, 10).HorizontalAlignment = -4108
-        xlWorkBook.ActiveSheet.Cells(i - 1, 10).Interior.Color = RGB(242, 242, 242)
-        xlWorkBook.ActiveSheet.Cells(i - 1, 10).Font.Bold = True
+        xlWorkBook.ActiveSheet.Cells(keyLine, 10).Value = "TIME & DATE"
+        xlWorkBook.ActiveSheet.Cells(keyLine, 10).HorizontalAlignment = -4108
+        xlWorkBook.ActiveSheet.Cells(keyLine, 10).Interior.Color = RGB(242, 242, 242)
+        xlWorkBook.ActiveSheet.Cells(keyLine, 10).Font.Bold = True
 
 
 
         'Find the end of the file
         Dim numericCnt As Integer = 0
 
-        Dim loopValue As Integer = i
+        Dim loopValue As Integer = keyLine + 1
         Do Until CStr(xlWorkBook.ActiveSheet.Cells(loopValue, 1).Value) = ""
             If IsNumeric(xlWorkBook.ActiveSheet.Cells(loopValue, 1).Value) Then
                 numericCnt = numericCnt + 1
@@ -642,33 +623,25 @@ Public Class MainForm
         xlWorkBook.Worksheets.Item(1).Activate
 
         'Find where the key line is to find the start
-        Dim i As Integer
-        i = 1
-        Dim keyLine As Integer
-        Do
-            If CStr(xlWorkBook.ActiveSheet.Cells(i, 1).Value) = "KEY" Then
-                keyLine = i
-            End If
-            i = i + 1
-        Loop Until keyLine > 0
+        Dim keyLine As Integer = FindKey()
 
+        'Find where the values end and Get the key values from the sheet
+        Dim keyVals As List(Of String) = New List(Of String)
+        Dim loopValue As Integer = keyLine + 1
+        Dim readValue As String = xlWorkBook.ActiveSheet.Cells(loopValue, 1).Value
 
-        'Find where the values end
-        Dim loopValue As Integer = i
-        Do Until CStr(xlWorkBook.ActiveSheet.Cells(loopValue, 1).Value) = ""
+        Do Until readValue = ""
+            keyVals.Add(readValue)
+
             loopValue = loopValue + 1
+            readValue = xlWorkBook.ActiveSheet.Cells(loopValue, 1).Value
         Loop
+
         loopValue = loopValue - 1
 
 
-        'Get the key values from the sheet
-        Dim keyVals As List(Of String) = New List(Of String)
-
-        For i = keyLine To loopValue
-            keyVals.Add(xlWorkBook.ActiveSheet.Cells(i, 1).Value)
-        Next
-
         'Remove any plyheads that were added previously
+        Dim i As Integer
         For i = keyVals.Count - 1 To 0 Step -1
             If keyVals(i) = "PLYHEAD" Then
                 If IsNumeric(keyVals(i - 1)) And IsNumeric(keyVals(i + 1)) Then
@@ -678,7 +651,6 @@ Public Class MainForm
         Next
 
         'Add plyheads at the top of each sheet
-        i = 0
         Do While i < keyVals.Count
             If (i - 36) Mod 37 = 0 Then 'Or i = 35 Then
                 If IsNumeric(keyVals(i - 1)) And IsNumeric(keyVals(i + 1)) Then
