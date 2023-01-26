@@ -2,8 +2,8 @@
 Imports Excel = Microsoft.Office.Interop.Excel
 
 Public Class MainForm
-    Dim xlWorkBook As Object
-    Dim Excel As Object = Nothing
+    Dim xlWorkBook As Microsoft.Office.Interop.Excel.Workbook = Nothing
+    Public Shared Property Excel As Microsoft.Office.Interop.Excel.Application = Nothing
 
     Public CalcState As Long
     Public EventState As Boolean
@@ -16,6 +16,38 @@ Public Class MainForm
 
     End Sub
 
+    Function GetExcel(Optional showErr As Boolean = True) As Boolean
+        Dim runTest As Boolean = False
+
+        For Each p As Process In Process.GetProcesses()
+            If p.ProcessName = "EXCEL" Then
+                runTest = True
+            End If
+        Next
+
+        'Get Excel object
+        Try
+            If runTest Then
+                Excel = GetObject(, "Excel.Application")
+            Else
+                Excel = CreateObject("Excel.Application")
+            End If
+
+            Excel.Visible = True
+
+        Catch
+            If showErr Then
+                Me.Hide()
+                MsgBox("Failed to get Excel object.",, "Error")
+                Me.Show()
+            End If
+
+            Return False
+        End Try
+
+        Return True
+    End Function
+
     Private Sub Btn_Browse_Click(sender As Object, e As EventArgs) Handles Btn_Browse.Click
         If OpenFileDialog.ShowDialog() = System.Windows.Forms.DialogResult.OK Then
             FilePath.Text = OpenFileDialog.FileName
@@ -24,7 +56,8 @@ Public Class MainForm
 
     Private Sub Btn_Open_Click(sender As Object, e As EventArgs) Handles Btn_Open.Click
         If checkFilePath() Then
-            Excel = CreateObject("Excel.Application")
+            GetExcel()
+
             xlWorkBook = Excel.Workbooks.Open(FilePath.Text)
 
             If xlWorkBook.ReadOnly Then
@@ -148,44 +181,47 @@ Public Class MainForm
     Sub plyStandardCreate()
 
         xlWorkBook.Worksheets.Item(1).Activate
+        Dim xlSheet As Microsoft.Office.Interop.Excel.Worksheet = xlWorkBook.ActiveSheet
+        Dim plyBookSht As Microsoft.Office.Interop.Excel.Worksheet = xlWorkBook.Sheets.Item(2)
+
         Dim debulkConst As Integer = CInt(Txt_DebulkConst.Text)
 
         Dim currentLine As Integer = FindKey() + 1
 
-        xlWorkBook.ActiveSheet.Range("A" & currentLine & ":A9999").Clear
+        xlSheet.Range("A" & currentLine & ":A" & xlSheet.UsedRange.Rows.Count).Clear()
 
         WriteLine("PREP", currentLine)
         WriteLine("PLYHEAD", currentLine)
 
-        Dim debulkRate As Integer = 0
-        Dim plyBookNum As Integer = 1
+        Dim layerCount As Integer = 0
+        Dim plyBookNum As Integer = 2
         Dim firstDebulk As Boolean = Not Chk_FirstPlyDebulk.Checked
 
-        Dim sequenceName As String = xlWorkBook.Sheets.Item(2).Cells(plyBookNum, 2).Value
+        Dim sequenceName As String = plyBookSht.Cells(plyBookNum, 2).Value
 
         Do
-            plyBookNum = plyBookNum + 1
-            If xlWorkBook.Sheets.Item(2).Cells(plyBookNum, 2).Value <> sequenceName Then
-                debulkRate = debulkRate + 1
-                sequenceName = xlWorkBook.Sheets.Item(2).Cells(plyBookNum, 2).Value
 
-                If firstDebulk = False And debulkRate = 2 Then
+            If plyBookSht.Cells(plyBookNum, 2).Value <> sequenceName Then
+                layerCount += 1
+                sequenceName = plyBookSht.Cells(plyBookNum, 2).Value
+
+                If firstDebulk = False And layerCount = 1 Then
                     AddDebulk(currentLine)
 
                     firstDebulk = True
-                    debulkRate = debulkRate - 1
+                    layerCount = 0
                 End If
             End If
 
-            If debulkRate = debulkConst + 1 Then
+            If layerCount = debulkConst Then
                 AddDebulk(currentLine)
-                debulkRate = 1
+                layerCount = 0
             End If
 
-            xlWorkBook.ActiveSheet.Cells(currentLine, 1).Value = xlWorkBook.Sheets.Item(2).Cells(plyBookNum, 1).Value
-            currentLine = currentLine + 1
+            WriteLine(plyBookSht.Cells(plyBookNum, 1).Value, currentLine)
 
-        Loop Until CStr(xlWorkBook.Sheets.Item(2).Cells(plyBookNum, 1).Value) = ""
+            plyBookNum += 1
+        Loop Until CStr(plyBookSht.Cells(plyBookNum, 1).Value) = ""
 
         currentLine = currentLine - 1
 
@@ -201,7 +237,7 @@ Public Class MainForm
         WriteLine("QUALITY", currentLine)
         WriteLine("BLANK", currentLine)
 
-
+        PlyHeaderNewSht()
     End Sub
 
     Function FindKey() As Integer
@@ -285,7 +321,6 @@ Public Class MainForm
         Loop
 
         'Find where the key line is
-        Dim i As Integer = 1
         Dim keyLine As Integer = FindKey()
 
 
@@ -340,6 +375,8 @@ Public Class MainForm
         Loop
         loopValue = loopValue - 1
 
+
+
         Dim numTotalTime As TimeSpan = New TimeSpan(0, 0, 0, 0, 0)
         Dim txtTotalTime As TimeSpan = New TimeSpan(0, 0, 0, 0, 0)
         Dim rollNumCnt As Integer = 0
@@ -350,7 +387,12 @@ Public Class MainForm
 
         Dim plyCount As Integer = 0
 
-        For i = i To loopValue
+
+
+
+        Dim i As Integer
+        For i = keyLine + 1 To loopValue
+
             Dim currentKey As String = xlWorkBook.ActiveSheet.Cells(i, 1).Value
 
             If i >= ExcelStartRow And i <= ExcelEndRow Then
@@ -621,27 +663,40 @@ Public Class MainForm
 
     Sub PlyHeaderNewSht()
         xlWorkBook.Worksheets.Item(1).Activate
+        Dim xlSheet As Microsoft.Office.Interop.Excel.Worksheet = xlWorkBook.ActiveSheet
 
-        'Find where the key line is to find the start
-        Dim keyLine As Integer = FindKey()
+        'Find the key line to start and format row heights to make sure lines per page is accurate
+        Dim startLine As Integer = FindKey() + 1
+        xlSheet.Rows(startLine - 2).RowHeight = 23.04
+        xlSheet.Rows(startLine - 1).RowHeight = 36
 
-        'Find where the values end and Get the key values from the sheet
+        'Find where the values end and get the key values from the sheet
         Dim keyVals As List(Of String) = New List(Of String)
-        Dim loopValue As Integer = keyLine + 1
-        Dim readValue As String = xlWorkBook.ActiveSheet.Cells(loopValue, 1).Value
+        Dim loopValue As Integer = startLine
+        Dim readValue As String = xlSheet.Cells(loopValue, 1).Value
 
         Do Until readValue = ""
             keyVals.Add(readValue)
 
-            loopValue = loopValue + 1
+            loopValue += 1
             readValue = xlWorkBook.ActiveSheet.Cells(loopValue, 1).Value
         Loop
 
-        loopValue = loopValue - 1
+
+        'Add any PlyHeads that are missing on transition back to numbers
+        Dim i As Integer = 1
+        Do While i < keyVals.Count
+            If IsNumeric(keyVals(i)) And
+                keyVals(i - 1) <> "PLYHEAD" And
+                Not IsNumeric(keyVals(i - 1)) Then
+
+                keyVals.Insert(i, "PLYHEAD")
+            End If
+            i += 1
+        Loop
 
 
-        'Remove any plyheads that were added previously
-        Dim i As Integer
+        'Remove any PlyHeads that were added previously
         For i = keyVals.Count - 1 To 0 Step -1
             If keyVals(i) = "PLYHEAD" Then
                 If IsNumeric(keyVals(i - 1)) And IsNumeric(keyVals(i + 1)) Then
@@ -650,24 +705,37 @@ Public Class MainForm
             End If
         Next
 
+        i = 0
         'Add plyheads at the top of each sheet
         Do While i < keyVals.Count
-            If (i - 36) Mod 37 = 0 Then 'Or i = 35 Then
-                If IsNumeric(keyVals(i - 1)) And IsNumeric(keyVals(i + 1)) Then
-                    keyVals.Insert(i, "PLYHEAD")
-                End If
+            If TopRow(i, keyVals) Then
+                keyVals.Insert(i, "PLYHEAD")
             End If
             i += 1
         Loop
 
         'Input values back into the sheet
-        For i = keyLine To keyLine + keyVals.Count - 1
-            xlWorkBook.ActiveSheet.Cells(i, 1).RowHeight = 36
-            xlWorkBook.ActiveSheet.Cells(i, 1).Value = keyVals(i - keyLine)
+        For i = 0 To keyVals.Count - 1
+            xlSheet.Rows(startLine + i).RowHeight = 36
+            xlSheet.Cells(startLine + i, 1).Value = keyVals(i)
         Next
 
-
     End Sub
+
+    Function TopRow(i As Integer, ByRef keyVals As List(Of String))
+
+        'Subtract the (35) lines from the first page =>
+        'Modulo by (37) lines per page to determine if this is a top row
+        'If it is a top row then check to see if a ply header is required
+
+        If (i - 35) Mod 37 = 0 Then
+            If IsNumeric(keyVals(i - 1)) And IsNumeric(keyVals(i + 1)) Then
+                Return True
+            End If
+        End If
+
+        Return False
+    End Function
 
     Private Sub Btn_ShtHeaders_Click(sender As Object, e As EventArgs) Handles Btn_ShtHeaders.Click
         Call PlyHeaderNewSht()
