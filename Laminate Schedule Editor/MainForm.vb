@@ -223,8 +223,6 @@ Public Class MainForm
             plyBookNum += 1
         Loop Until CStr(plyBookSht.Cells(plyBookNum, 1).Value) = ""
 
-        currentLine = currentLine - 1
-
         WriteLine("TC", currentLine)
         WriteLine("FB", currentLine)
         WriteLine("LEAK", currentLine)
