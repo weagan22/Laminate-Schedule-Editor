@@ -38,6 +38,9 @@ Partial Class MainForm
         Me.TableLayoutPanel3 = New System.Windows.Forms.TableLayoutPanel()
         Me.GroupBox3 = New System.Windows.Forms.GroupBox()
         Me.TableLayoutPanel4 = New System.Windows.Forms.TableLayoutPanel()
+        Me.TableLayoutPanel8 = New System.Windows.Forms.TableLayoutPanel()
+        Me.Chk_FirstPlyDebulk = New System.Windows.Forms.CheckBox()
+        Me.TableLayoutPanel9 = New System.Windows.Forms.TableLayoutPanel()
         Me.TableLayoutPanel5 = New System.Windows.Forms.TableLayoutPanel()
         Me.Btn_buildUpRoll = New System.Windows.Forms.Button()
         Me.Btn_ShtHeaders = New System.Windows.Forms.Button()
@@ -50,9 +53,6 @@ Partial Class MainForm
         Me.Txt_ExcelEndRow = New System.Windows.Forms.TextBox()
         Me.StatusStrip1 = New System.Windows.Forms.StatusStrip()
         Me.ToolStripStatusLabel1 = New System.Windows.Forms.ToolStripStatusLabel()
-        Me.TableLayoutPanel8 = New System.Windows.Forms.TableLayoutPanel()
-        Me.TableLayoutPanel9 = New System.Windows.Forms.TableLayoutPanel()
-        Me.Chk_FirstPlyDebulk = New System.Windows.Forms.CheckBox()
         Me.GroupBox1.SuspendLayout()
         Me.GroupBox2.SuspendLayout()
         Me.TableLayoutPanel1.SuspendLayout()
@@ -60,6 +60,8 @@ Partial Class MainForm
         Me.TableLayoutPanel3.SuspendLayout()
         Me.GroupBox3.SuspendLayout()
         Me.TableLayoutPanel4.SuspendLayout()
+        Me.TableLayoutPanel8.SuspendLayout()
+        Me.TableLayoutPanel9.SuspendLayout()
         Me.TableLayoutPanel5.SuspendLayout()
         Me.TableLayoutPanel6.SuspendLayout()
         Me.GroupBox4.SuspendLayout()
@@ -67,8 +69,6 @@ Partial Class MainForm
         Me.GroupBox5.SuspendLayout()
         Me.GroupBox6.SuspendLayout()
         Me.StatusStrip1.SuspendLayout()
-        Me.TableLayoutPanel8.SuspendLayout()
-        Me.TableLayoutPanel9.SuspendLayout()
         Me.SuspendLayout()
         '
         'FilePath
@@ -110,7 +110,7 @@ Partial Class MainForm
         Me.Btn_PlyStdCreate.Location = New System.Drawing.Point(3, 23)
         Me.Btn_PlyStdCreate.Name = "Btn_PlyStdCreate"
         Me.Btn_PlyStdCreate.Size = New System.Drawing.Size(149, 66)
-        Me.Btn_PlyStdCreate.TabIndex = 3
+        Me.Btn_PlyStdCreate.TabIndex = 0
         Me.Btn_PlyStdCreate.Text = "Ply Standard Create"
         Me.Btn_PlyStdCreate.UseVisualStyleBackColor = True
         '
@@ -120,7 +120,7 @@ Partial Class MainForm
         Me.Btn_ReRunVals.Location = New System.Drawing.Point(3, 3)
         Me.Btn_ReRunVals.Name = "Btn_ReRunVals"
         Me.Btn_ReRunVals.Size = New System.Drawing.Size(182, 62)
-        Me.Btn_ReRunVals.TabIndex = 4
+        Me.Btn_ReRunVals.TabIndex = 1
         Me.Btn_ReRunVals.Text = "Apply Values"
         Me.Btn_ReRunVals.UseVisualStyleBackColor = True
         '
@@ -130,7 +130,7 @@ Partial Class MainForm
         Me.Txt_DebulkConst.Location = New System.Drawing.Point(3, 16)
         Me.Txt_DebulkConst.Name = "Txt_DebulkConst"
         Me.Txt_DebulkConst.Size = New System.Drawing.Size(115, 20)
-        Me.Txt_DebulkConst.TabIndex = 5
+        Me.Txt_DebulkConst.TabIndex = 0
         Me.Txt_DebulkConst.Text = "4"
         Me.Txt_DebulkConst.TextAlign = System.Windows.Forms.HorizontalAlignment.Center
         '
@@ -141,7 +141,7 @@ Partial Class MainForm
         Me.GroupBox1.Location = New System.Drawing.Point(3, 3)
         Me.GroupBox1.Name = "GroupBox1"
         Me.GroupBox1.Size = New System.Drawing.Size(121, 50)
-        Me.GroupBox1.TabIndex = 6
+        Me.GroupBox1.TabIndex = 0
         Me.GroupBox1.TabStop = False
         Me.GroupBox1.Text = "Layers Per De-Bulk"
         '
@@ -151,7 +151,7 @@ Partial Class MainForm
         Me.Btn_wrkUpdate.Location = New System.Drawing.Point(3, 3)
         Me.Btn_wrkUpdate.Name = "Btn_wrkUpdate"
         Me.Btn_wrkUpdate.Size = New System.Drawing.Size(157, 39)
-        Me.Btn_wrkUpdate.TabIndex = 7
+        Me.Btn_wrkUpdate.TabIndex = 0
         Me.Btn_wrkUpdate.Text = "Header/Footer Update"
         Me.Btn_wrkUpdate.UseVisualStyleBackColor = True
         '
@@ -162,7 +162,7 @@ Partial Class MainForm
         Me.GroupBox2.Location = New System.Drawing.Point(3, 3)
         Me.GroupBox2.Name = "GroupBox2"
         Me.GroupBox2.Size = New System.Drawing.Size(669, 143)
-        Me.GroupBox2.TabIndex = 8
+        Me.GroupBox2.TabIndex = 0
         Me.GroupBox2.TabStop = False
         Me.GroupBox2.Text = "File To Edit"
         '
@@ -214,7 +214,7 @@ Partial Class MainForm
         Me.TableLayoutPanel3.RowCount = 1
         Me.TableLayoutPanel3.RowStyles.Add(New System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 100.0!))
         Me.TableLayoutPanel3.Size = New System.Drawing.Size(669, 143)
-        Me.TableLayoutPanel3.TabIndex = 9
+        Me.TableLayoutPanel3.TabIndex = 0
         '
         'GroupBox3
         '
@@ -223,7 +223,7 @@ Partial Class MainForm
         Me.GroupBox3.Location = New System.Drawing.Point(3, 3)
         Me.GroupBox3.Name = "GroupBox3"
         Me.GroupBox3.Size = New System.Drawing.Size(300, 137)
-        Me.GroupBox3.TabIndex = 3
+        Me.GroupBox3.TabIndex = 1
         Me.GroupBox3.TabStop = False
         Me.GroupBox3.Text = "Create Col A Keys"
         '
@@ -242,6 +242,49 @@ Partial Class MainForm
         Me.TableLayoutPanel4.Size = New System.Drawing.Size(294, 118)
         Me.TableLayoutPanel4.TabIndex = 0
         '
+        'TableLayoutPanel8
+        '
+        Me.TableLayoutPanel8.ColumnCount = 1
+        Me.TableLayoutPanel8.ColumnStyles.Add(New System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 100.0!))
+        Me.TableLayoutPanel8.Controls.Add(Me.GroupBox1, 0, 0)
+        Me.TableLayoutPanel8.Controls.Add(Me.Chk_FirstPlyDebulk, 0, 1)
+        Me.TableLayoutPanel8.Dock = System.Windows.Forms.DockStyle.Fill
+        Me.TableLayoutPanel8.Location = New System.Drawing.Point(164, 3)
+        Me.TableLayoutPanel8.Name = "TableLayoutPanel8"
+        Me.TableLayoutPanel8.RowCount = 2
+        Me.TableLayoutPanel8.RowStyles.Add(New System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 50.0!))
+        Me.TableLayoutPanel8.RowStyles.Add(New System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 50.0!))
+        Me.TableLayoutPanel8.Size = New System.Drawing.Size(127, 112)
+        Me.TableLayoutPanel8.TabIndex = 7
+        '
+        'Chk_FirstPlyDebulk
+        '
+        Me.Chk_FirstPlyDebulk.Anchor = CType((System.Windows.Forms.AnchorStyles.Left Or System.Windows.Forms.AnchorStyles.Right), System.Windows.Forms.AnchorStyles)
+        Me.Chk_FirstPlyDebulk.AutoSize = True
+        Me.Chk_FirstPlyDebulk.Checked = True
+        Me.Chk_FirstPlyDebulk.CheckState = System.Windows.Forms.CheckState.Checked
+        Me.Chk_FirstPlyDebulk.Location = New System.Drawing.Point(3, 75)
+        Me.Chk_FirstPlyDebulk.Name = "Chk_FirstPlyDebulk"
+        Me.Chk_FirstPlyDebulk.Size = New System.Drawing.Size(121, 17)
+        Me.Chk_FirstPlyDebulk.TabIndex = 7
+        Me.Chk_FirstPlyDebulk.Text = "First Ply Debulk"
+        Me.Chk_FirstPlyDebulk.UseVisualStyleBackColor = True
+        '
+        'TableLayoutPanel9
+        '
+        Me.TableLayoutPanel9.ColumnCount = 1
+        Me.TableLayoutPanel9.ColumnStyles.Add(New System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 100.0!))
+        Me.TableLayoutPanel9.Controls.Add(Me.Btn_PlyStdCreate, 0, 1)
+        Me.TableLayoutPanel9.Dock = System.Windows.Forms.DockStyle.Fill
+        Me.TableLayoutPanel9.Location = New System.Drawing.Point(3, 3)
+        Me.TableLayoutPanel9.Name = "TableLayoutPanel9"
+        Me.TableLayoutPanel9.RowCount = 3
+        Me.TableLayoutPanel9.RowStyles.Add(New System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 20.0!))
+        Me.TableLayoutPanel9.RowStyles.Add(New System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 100.0!))
+        Me.TableLayoutPanel9.RowStyles.Add(New System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 20.0!))
+        Me.TableLayoutPanel9.Size = New System.Drawing.Size(155, 112)
+        Me.TableLayoutPanel9.TabIndex = 0
+        '
         'TableLayoutPanel5
         '
         Me.TableLayoutPanel5.ColumnCount = 1
@@ -257,7 +300,7 @@ Partial Class MainForm
         Me.TableLayoutPanel5.RowStyles.Add(New System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 33.33333!))
         Me.TableLayoutPanel5.RowStyles.Add(New System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 33.33333!))
         Me.TableLayoutPanel5.Size = New System.Drawing.Size(163, 137)
-        Me.TableLayoutPanel5.TabIndex = 5
+        Me.TableLayoutPanel5.TabIndex = 3
         '
         'Btn_buildUpRoll
         '
@@ -265,7 +308,7 @@ Partial Class MainForm
         Me.Btn_buildUpRoll.Location = New System.Drawing.Point(3, 48)
         Me.Btn_buildUpRoll.Name = "Btn_buildUpRoll"
         Me.Btn_buildUpRoll.Size = New System.Drawing.Size(157, 39)
-        Me.Btn_buildUpRoll.TabIndex = 8
+        Me.Btn_buildUpRoll.TabIndex = 1
         Me.Btn_buildUpRoll.Text = "Build-up Roll"
         Me.Btn_buildUpRoll.UseVisualStyleBackColor = True
         '
@@ -275,7 +318,7 @@ Partial Class MainForm
         Me.Btn_ShtHeaders.Location = New System.Drawing.Point(3, 93)
         Me.Btn_ShtHeaders.Name = "Btn_ShtHeaders"
         Me.Btn_ShtHeaders.Size = New System.Drawing.Size(157, 41)
-        Me.Btn_ShtHeaders.TabIndex = 3
+        Me.Btn_ShtHeaders.TabIndex = 2
         Me.Btn_ShtHeaders.Text = "PLYHEAD Per Sheet"
         Me.Btn_ShtHeaders.UseVisualStyleBackColor = True
         '
@@ -292,7 +335,7 @@ Partial Class MainForm
         Me.TableLayoutPanel6.RowStyles.Add(New System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 50.0!))
         Me.TableLayoutPanel6.RowStyles.Add(New System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 50.0!))
         Me.TableLayoutPanel6.Size = New System.Drawing.Size(188, 137)
-        Me.TableLayoutPanel6.TabIndex = 6
+        Me.TableLayoutPanel6.TabIndex = 2
         '
         'GroupBox4
         '
@@ -375,49 +418,6 @@ Partial Class MainForm
         Me.ToolStripStatusLabel1.Size = New System.Drawing.Size(48, 17)
         Me.ToolStripStatusLabel1.Text = "Status..."
         '
-        'TableLayoutPanel8
-        '
-        Me.TableLayoutPanel8.ColumnCount = 1
-        Me.TableLayoutPanel8.ColumnStyles.Add(New System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 100.0!))
-        Me.TableLayoutPanel8.Controls.Add(Me.GroupBox1, 0, 0)
-        Me.TableLayoutPanel8.Controls.Add(Me.Chk_FirstPlyDebulk, 0, 1)
-        Me.TableLayoutPanel8.Dock = System.Windows.Forms.DockStyle.Fill
-        Me.TableLayoutPanel8.Location = New System.Drawing.Point(164, 3)
-        Me.TableLayoutPanel8.Name = "TableLayoutPanel8"
-        Me.TableLayoutPanel8.RowCount = 2
-        Me.TableLayoutPanel8.RowStyles.Add(New System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 50.0!))
-        Me.TableLayoutPanel8.RowStyles.Add(New System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 50.0!))
-        Me.TableLayoutPanel8.Size = New System.Drawing.Size(127, 112)
-        Me.TableLayoutPanel8.TabIndex = 7
-        '
-        'TableLayoutPanel9
-        '
-        Me.TableLayoutPanel9.ColumnCount = 1
-        Me.TableLayoutPanel9.ColumnStyles.Add(New System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 100.0!))
-        Me.TableLayoutPanel9.Controls.Add(Me.Btn_PlyStdCreate, 0, 1)
-        Me.TableLayoutPanel9.Dock = System.Windows.Forms.DockStyle.Fill
-        Me.TableLayoutPanel9.Location = New System.Drawing.Point(3, 3)
-        Me.TableLayoutPanel9.Name = "TableLayoutPanel9"
-        Me.TableLayoutPanel9.RowCount = 3
-        Me.TableLayoutPanel9.RowStyles.Add(New System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 20.0!))
-        Me.TableLayoutPanel9.RowStyles.Add(New System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 100.0!))
-        Me.TableLayoutPanel9.RowStyles.Add(New System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 20.0!))
-        Me.TableLayoutPanel9.Size = New System.Drawing.Size(155, 112)
-        Me.TableLayoutPanel9.TabIndex = 7
-        '
-        'Chk_FirstPlyDebulk
-        '
-        Me.Chk_FirstPlyDebulk.Anchor = CType((System.Windows.Forms.AnchorStyles.Left Or System.Windows.Forms.AnchorStyles.Right), System.Windows.Forms.AnchorStyles)
-        Me.Chk_FirstPlyDebulk.AutoSize = True
-        Me.Chk_FirstPlyDebulk.Checked = True
-        Me.Chk_FirstPlyDebulk.CheckState = System.Windows.Forms.CheckState.Checked
-        Me.Chk_FirstPlyDebulk.Location = New System.Drawing.Point(3, 75)
-        Me.Chk_FirstPlyDebulk.Name = "Chk_FirstPlyDebulk"
-        Me.Chk_FirstPlyDebulk.Size = New System.Drawing.Size(121, 17)
-        Me.Chk_FirstPlyDebulk.TabIndex = 7
-        Me.Chk_FirstPlyDebulk.Text = "First Ply Debulk"
-        Me.Chk_FirstPlyDebulk.UseVisualStyleBackColor = True
-        '
         'MainForm
         '
         Me.AutoScaleDimensions = New System.Drawing.SizeF(6.0!, 13.0!)
@@ -437,6 +437,9 @@ Partial Class MainForm
         Me.TableLayoutPanel3.ResumeLayout(False)
         Me.GroupBox3.ResumeLayout(False)
         Me.TableLayoutPanel4.ResumeLayout(False)
+        Me.TableLayoutPanel8.ResumeLayout(False)
+        Me.TableLayoutPanel8.PerformLayout()
+        Me.TableLayoutPanel9.ResumeLayout(False)
         Me.TableLayoutPanel5.ResumeLayout(False)
         Me.TableLayoutPanel6.ResumeLayout(False)
         Me.GroupBox4.ResumeLayout(False)
@@ -447,9 +450,6 @@ Partial Class MainForm
         Me.GroupBox6.PerformLayout()
         Me.StatusStrip1.ResumeLayout(False)
         Me.StatusStrip1.PerformLayout()
-        Me.TableLayoutPanel8.ResumeLayout(False)
-        Me.TableLayoutPanel8.PerformLayout()
-        Me.TableLayoutPanel9.ResumeLayout(False)
         Me.ResumeLayout(False)
         Me.PerformLayout()
 
