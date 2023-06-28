@@ -272,26 +272,46 @@ Public Class MainForm
 
         xlWorkBook.Worksheets.Item(1).Activate
 
-
         'Gets values from PlyBook tab
+        Dim loadRng As Excel.Range = xlWorkBook.Sheets.Item(2).UsedRange
+        Dim arrRng As Object = loadRng.Value(10)
+
         Dim arrPlies(,) As String
         ReDim arrPlies(3, 0)
 
-        Dim m As Integer = 1
-        Do Until CStr(xlWorkBook.Sheets.Item(2).Cells(m + 1, 1).Value) = ""
-            ReDim Preserve arrPlies(3, m)
-            arrPlies(0, m) = xlWorkBook.Sheets.Item(2).Cells(m + 1, 1).Value
-            arrPlies(1, m) = xlWorkBook.Sheets.Item(2).Cells(m + 1, 3).Value
-            arrPlies(2, m) = xlWorkBook.Sheets.Item(2).Cells(m + 1, 5).Value
-            arrPlies(3, m) = xlWorkBook.Sheets.Item(2).Cells(m + 1, 4).Value
-            m = m + 1
-        Loop
+        Dim s As Integer = 1
+        For s = 1 To UBound(arrRng) - 1
+            If CStr(arrRng(s + 1, 1)) = "" Then Exit For
+
+            ReDim Preserve arrPlies(3, s)
+            arrPlies(0, s) = arrRng(s + 1, 1)
+            arrPlies(1, s) = arrRng(s + 1, 3)
+            arrPlies(2, s) = arrRng(s + 1, 5)
+            arrPlies(3, s) = arrRng(s + 1, 4)
+        Next
+
+
+
+        'Gets values from PlyBook tab
+        'Dim arrPlies(,) As String
+        'ReDim arrPlies(3, 0)
+
+        'Dim m As Integer = 1
+        'Do Until CStr(xlWorkBook.Sheets.Item(2).Cells(m + 1, 1).Value) = ""
+        '    ReDim Preserve arrPlies(3, m)
+        '    arrPlies(0, m) = xlWorkBook.Sheets.Item(2).Cells(m + 1, 1).Value
+        '    arrPlies(1, m) = xlWorkBook.Sheets.Item(2).Cells(m + 1, 3).Value
+        '    arrPlies(2, m) = xlWorkBook.Sheets.Item(2).Cells(m + 1, 5).Value
+        '    arrPlies(3, m) = xlWorkBook.Sheets.Item(2).Cells(m + 1, 4).Value
+        '    m = m + 1
+        'Loop
 
 
         'Gets values from standards tab
         Dim arrStandard(,) As Object
         ReDim arrStandard(15, 0)
 
+        Dim m As Integer = 1
         m = 1
         Do Until CStr(xlWorkBook.Sheets.Item(3).Cells(m + 1, 1).Value) = ""
             ReDim Preserve arrStandard(15, m)
@@ -320,20 +340,6 @@ Public Class MainForm
 
         'Find where the key line is
         Dim keyLine As Integer = FindKey()
-
-
-        'Get the rows that the user would like to run
-        Dim ExcelStartRow As Integer = CInt(Txt_ExcelStartRow.Text)
-        Dim ExcelEndRow As Integer = CInt(Txt_ExcelEndRow.Text)
-
-        If ExcelStartRow < keyLine Then ExcelStartRow = keyLine
-        If ExcelEndRow < keyLine Then ExcelEndRow = 9999
-
-
-        'Unmerge the rows that the user would like to update
-        xlWorkBook.ActiveSheet.Range("B" & ExcelStartRow & ":K" & ExcelEndRow).UnMerge
-        xlWorkBook.ActiveSheet.Range("B" & ExcelStartRow & ":K" & ExcelEndRow).Clear
-
 
 
         'Update the key row
@@ -372,6 +378,23 @@ Public Class MainForm
             loopValue = loopValue + 1
         Loop
         loopValue = loopValue - 1
+
+
+        'Get the rows that the user would like to run
+        Dim ExcelStartRow As Integer = CInt(Txt_ExcelStartRow.Text)
+        Dim ExcelEndRow As Integer = CInt(Txt_ExcelEndRow.Text)
+
+        If ExcelStartRow < keyLine Then ExcelStartRow = keyLine
+        If ExcelEndRow < keyLine Then
+            ExcelEndRow = loopValue
+        ElseIf ExcelEndRow < loopValue Then
+            loopValue = ExcelEndRow
+        End If
+
+
+        'Unmerge the rows that the user would like to update
+        xlWorkBook.ActiveSheet.Range("B" & ExcelStartRow & ":K" & ExcelEndRow).UnMerge
+        xlWorkBook.ActiveSheet.Range("B" & ExcelStartRow & ":K" & ExcelEndRow).Clear
 
 
 
@@ -528,7 +551,10 @@ Public Class MainForm
 
             ElseIf IsNumeric(currentKey) Then
                 Dim multiPlyFormat As Regex = New Regex("(\d+) PCS")
-                If multiPlyFormat.IsMatch(xlWorkBook.ActiveSheet.Cells(i, 2).Value) Then
+
+                Dim cellString As String = xlWorkBook.ActiveSheet.Cells(i, 2).Value
+
+                If Not String.IsNullOrEmpty(cellString) AndAlso multiPlyFormat.IsMatch(xlWorkBook.ActiveSheet.Cells(i, 2).Value) Then
                     plyCount += CInt(multiPlyFormat.Match(xlWorkBook.ActiveSheet.Cells(i, 2).Value).Groups.Item(1).Value)
                 Else
                     plyCount += 1
