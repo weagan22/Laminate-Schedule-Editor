@@ -731,7 +731,7 @@ Public Class MainForm
 
         i = 0
         'Add plyheads at the top of each sheet
-        Do While i < keyVals.Count
+        Do While i < keyVals.Count - 1
             If TopRow(i, keyVals) Then
                 keyVals.Insert(i, "PLYHEAD")
             End If
