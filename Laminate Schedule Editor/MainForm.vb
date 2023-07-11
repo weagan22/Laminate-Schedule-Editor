@@ -341,6 +341,8 @@ Public Class MainForm
         'Find where the key line is
         Dim keyLine As Integer = FindKey()
 
+        'Clear and page breaks or print area settings
+        Call PageBreakSet(keyLine)
 
         'Update the key row
         xlWorkBook.ActiveSheet.Range("B" & keyLine & ":G" & keyLine).Merge
@@ -580,6 +582,34 @@ Public Class MainForm
 
         Dim duration As TimeSpan = Now() - startTime
         ToolStripStatusLabel1.Text = "Total Duration (s): " & Math.Round(duration.TotalSeconds, 2)
+    End Sub
+
+    Sub PageBreakSet(KeyRow As Integer)
+        xlWorkBook.Worksheets.Item(1).Activate
+        Dim ActiveSheet As Excel.Worksheet = xlWorkBook.ActiveSheet
+        ActiveSheet.PageSetup.PrintArea = ""
+
+        For i = 1 To ActiveSheet.VPageBreaks.Count
+            ActiveSheet.VPageBreaks.Item(1).Delete()
+        Next
+
+        Dim keyLineBreak As Boolean = False
+        For i = ActiveSheet.HPageBreaks.Count To 1 Step -1
+            Dim PBreak As Excel.HPageBreak = ActiveSheet.HPageBreaks.Item(i)
+            Dim breakRowNum As Integer = PBreak.Location.Row
+
+            If breakRowNum > KeyRow - 1 Then
+                PBreak.Delete()
+            End If
+
+            If breakRowNum = KeyRow - 1 Then
+                keyLineBreak = True
+            End If
+        Next
+
+        If Not keyLineBreak Then
+            ActiveSheet.HPageBreaks.Add(ActiveSheet.Rows(KeyRow - 1))
+        End If
     End Sub
 
     Sub OptimizeCode_Begin()
