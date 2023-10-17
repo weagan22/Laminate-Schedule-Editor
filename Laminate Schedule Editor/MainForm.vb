@@ -783,7 +783,10 @@ Public Class MainForm
         'If it is a top row then check to see if a ply header is required
 
         If (i - 35) Mod 37 = 0 Then
-            If IsNumeric(keyVals(i - 1)) And IsNumeric(keyVals(i + 1)) Then
+            Dim lastVal As String = keyVals(i - 1)
+            Dim nextVal As String = keyVals(i)
+
+            If IsNumeric(lastVal) And IsNumeric(nextVal) Then
                 Return True
             End If
         End If
