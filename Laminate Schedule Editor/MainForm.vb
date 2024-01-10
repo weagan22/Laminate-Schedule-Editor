@@ -443,6 +443,7 @@ Public Class MainForm
 
                     timeToComplete = numericCnt * avgNumTime + (loopValue - i - numericCnt) * avgTxtTime
                     ToolStripStatusLabel1.Text = "Time To Complete (s): " & Math.Round(timeToComplete, 2) & " | Current Key #: " & currentKey
+                    ToolStripProgressBar1.Value = ((i - keyLine) / (loopValue - keyLine)) * 100
 
                     xlWorkBook.ActiveSheet.Range("C" & i & ":D" & i).Merge
                     xlWorkBook.ActiveSheet.Range("E" & i & ":G" & i).Merge
@@ -486,6 +487,7 @@ Public Class MainForm
                 ElseIf currentKey = "CLEAR" Then
                     timeToComplete = numericCnt * avgNumTime + (loopValue - i - numericCnt) * avgTxtTime
                     ToolStripStatusLabel1.Text = "Time To Complete (s): " & Math.Round(timeToComplete, 2) & " | Current Key #: " & currentKey
+                    ToolStripProgressBar1.Value = ((i - keyLine) / (loopValue - keyLine)) * 100
 
                     xlWorkBook.ActiveSheet.Range("B" & i & ":L" & i).Merge
 
@@ -495,6 +497,7 @@ Public Class MainForm
 
                     timeToComplete = numericCnt * avgNumTime + (loopValue - i - numericCnt) * avgTxtTime
                     ToolStripStatusLabel1.Text = "Time To Complete (s): " & Math.Round(timeToComplete, 2) & " | Current Key #: " & currentKey
+                    ToolStripProgressBar1.Value = ((i - keyLine) / (loopValue - keyLine)) * 100
 
                     xlWorkBook.ActiveSheet.Range("B" & i & ":G" & i).Merge
 
@@ -581,6 +584,7 @@ Public Class MainForm
 
         Dim duration As TimeSpan = Now() - startTime
         ToolStripStatusLabel1.Text = "Total Duration (s): " & Math.Round(duration.TotalSeconds, 2)
+        ToolStripProgressBar1.Value = 0
     End Sub
 
     Sub PageBreakSet(KeyRow As Integer)
