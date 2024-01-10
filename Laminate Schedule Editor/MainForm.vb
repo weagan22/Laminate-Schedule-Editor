@@ -268,7 +268,7 @@ Public Class MainForm
     Sub addValues()
         Dim startTime As DateTime = Now()
 
-        Call OptimizeCode_Begin()
+        'Call OptimizeCode_Begin()
 
         xlWorkBook.Worksheets.Item(1).Activate
 
@@ -367,7 +367,6 @@ Public Class MainForm
         xlWorkBook.ActiveSheet.Cells(keyLine, 10).Font.Bold = True
 
 
-
         'Find the end of the file
         Dim numericCnt As Integer = 0
 
@@ -386,7 +385,7 @@ Public Class MainForm
         Dim ExcelStartRow As Integer = CInt(Txt_ExcelStartRow.Text)
         Dim ExcelEndRow As Integer = CInt(Txt_ExcelEndRow.Text)
 
-        If ExcelStartRow < keyLine Then ExcelStartRow = keyLine
+        If ExcelStartRow <= keyLine Then ExcelStartRow = keyLine + 1
         If ExcelEndRow < keyLine Then
             ExcelEndRow = loopValue
         ElseIf ExcelEndRow < loopValue Then
